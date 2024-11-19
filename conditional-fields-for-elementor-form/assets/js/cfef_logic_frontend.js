@@ -140,18 +140,18 @@
                 }
 
                 var hiddenDiv = dependent_fi[0];
-                var	is_field_hidden = true;
-                                    
-                is_field_hidden = hiddenDiv?.classList.contains('cfef-hidden');
+                var	is_field_hidden = hiddenDiv ? hiddenDiv.classList.contains('cfef-hidden') : hiddenDiv;
                 if(conditional_logic_values.cfef_logic_field_id){
                     var value_id = getFieldEnteredValue(conditional_logic_values.cfef_logic_field_id, form);
                     var value = is_field_hidden ? false : checkFieldLogic(value_id, conditional_logic_values.cfef_logic_field_is, conditional_logic_values.cfef_logic_compare_value);
                     conditionPassFail.push(value);
+               
                 }
                                    
             });
 
             var conditionResult = fireAction == "All" ? conditionPassFail.every(function(fvalue) { return fvalue === true; }) : conditionPassFail.some(function(fvalue) { return fvalue === true; });
+
             if (displayMode== "show") {
                 if (conditionResult) {
                     field.removeClass("cfef-hidden");
@@ -179,27 +179,36 @@
             }
         }
 
-        function logicFixedRequiredShow(formField,file_types) {
+        function logicFixedRequiredShow(formField,file_types,status) {
             if (formField.hasClass("elementor-field-type-radio") && formField.find('input[value="^newOptionTest"]').length !== 0) {
                 formField.find('input[value="^newOptionTest"]').closest("span.elementor-field-option").remove();
+                let checkedRadio = formField.find('input[checked="checked"]')[0]
+                checkedRadio ? $(checkedRadio).prop('checked', true):  $(checkedRadio).prop('checked', false)
             } else if (formField.hasClass("elementor-field-type-acceptance")) {
                 const acceptanceInput = formField.find('.elementor-field-subgroup .elementor-field-option input')[0]
-                if (acceptanceInput && acceptanceInput.checked === true) {
+                if (formField.hasClass("cfef-hidden") && acceptanceInput && acceptanceInput.checked === true && status === "visible" && !jQuery(acceptanceInput).attr('checked')) {
+                    acceptanceInput.checked = false
                 }
             } else if (formField.hasClass("elementor-field-type-checkbox") && formField.find('input[value="newchkTest"]').length !== 0) {
                 formField.find('input[value="newchkTest"]').closest("span.elementor-field-option").remove();
             } else if (formField.hasClass("elementor-field-type-date") && formField.find("input").val() === "1003-01-01") {
-                formField.find("input").val("");
+                let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
+                formField.find("input").val(value);
             } else if (formField.hasClass("elementor-field-type-time") && formField.find("input").val() === "11:59") {
-                formField.find("input").val("");
+                let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
+                formField.find("input").val(value);
             } else if (formField.hasClass("elementor-field-type-tel") && formField.find("input").val() === "+1234567890") {
-                formField.find("input").val("");
+                let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
+                formField.find("input").val(value);
             } else if (formField.hasClass("elementor-field-type-url") && formField.find("input").val() === "https://testing.com") {
-                formField.find("input").val("");
+                let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
+                formField.find("input").val(value);
             } else if (formField.hasClass("elementor-field-type-email") && formField.find("input").val() === "cool_plugins@abc.com") {
-                formField.find("input").val("");
+                let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
+                formField.find("input").val(value);
             } else if (formField.hasClass("elementor-field-type-number") && formField.find("input").val() === "000") {
-                formField.find("input").val("");
+                let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
+                formField.find("input").val(value);
             } 
             else if (formField.hasClass("elementor-field-type-upload")) {
                 const firstType = file_types.split(',')[0];
@@ -211,20 +220,25 @@
                 }
             }
             else if (formField.hasClass("elementor-field-type-textarea") && formField.find("textarea").val() === "cool_plugins") {
-                formField.find("textarea").val("");
+                let defaultVal = formField.find("textarea")[0].innerHTML;
+                let value = formField.find("textarea")[0].innerHTML ? formField.find("textarea")[0].innerHTML : '';
+                formField.find("textarea").val(value);
             } else if (formField.hasClass("elementor-field-type-select")) {
                 var selectBox = formField.find("select");
                 if (selectBox.length > 0 && selectBox.find("option").length > 0) {
                     var selectedValue = selectBox.val();
-                    if (selectedValue == 'premium1@') {
-                        selectBox.find("option[value='premium1@']").remove();
-                        selectBox.val(selectBox.find("option:first").val());
+                    if (selectedValue == 'premium1@' || selectedValue[0] == 'premium1@') {
+                        selectBox.find("option[value='premium1@']").remove();      
+                        const selectedOption = selectBox.find("option[selected='selected']")[0];
+                        let value = $(selectedOption).attr('value') ? $(selectedOption).attr('value'):selectBox.find("option:first").val()
+						selectBox.val(value);
                     }
                 }
             } else {
                 var FieldValues = formField.find("input").val();
                 if (FieldValues == "cool23plugins") {
-                    formField.find("input").val("");
+                    let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
+                    formField.find("input").val(value);
                 }
             }
         }

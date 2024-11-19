@@ -3,13 +3,13 @@
  * Plugin Name: Conditional Fields for Elementor Form
  * Plugin URI:https://coolplugins.net/
  * Description: The Conditional Fields for Elementor plugin add-on used to show and hide form fields based on conditional input values.
- * Version: 1.3.4
+ * Version: 1.3.5
  * Author:  Cool Plugins
  * Author URI: https://coolplugins.net/
  * License:GPL2
  * Text Domain:cfef
  * Elementor tested up to: 3.25.7
- * Elementor Pro tested up to: 3.25.7
+ * Elementor Pro tested up to: 3.25.3
  *
  * @package cfef
  */
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 if ( ! defined( 'CFEF_VERSION' ) ) {
-	define( 'CFEF_VERSION', '1.3.4' );
+	define( 'CFEF_VERSION', '1.3.5' );
 }
 /*** Defined constent for later use */
 define( 'CFEF_FILE', __FILE__ );
@@ -65,7 +65,8 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 		 */
 		private function __construct() {
 			add_action( 'init', array( $this, 'is_compatible' ) );
-			add_action( 'plugins_loaded',array($this,'text_domain_path_set'));
+			add_action( 'init', array( $this, 'text_domain_path_set' ) );
+			add_action( 'plugins_loaded',array($this,'compatibilityCheck'));
 			add_action( 'activated_plugin', array( $this, 'Cfef_plugin_redirection' ) );
 			add_action( 'elementor_pro/forms/actions/register', array($this,'cfef_register_new_form_actions') );
 		}
@@ -112,6 +113,9 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 
 		public function text_domain_path_set(){
 			load_plugin_textdomain( 'cfef', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		}
+
+		public function compatibilityCheck(){
 			if ( is_plugin_active( 'cool-formkit-for-elementor-forms/cool-formkit-for-elementor-forms.php' ) ) {
 				return false;
 			}
