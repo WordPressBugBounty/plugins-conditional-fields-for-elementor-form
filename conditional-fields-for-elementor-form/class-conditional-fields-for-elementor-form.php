@@ -3,12 +3,12 @@
  * Plugin Name: Conditional Fields for Elementor Form
  * Plugin URI:https://coolplugins.net/
  * Description: The Conditional Fields for Elementor plugin add-on used to show and hide form fields based on conditional input values.
- * Version: 1.3.6
+ * Version: 1.3.7
  * Author:  Cool Plugins
  * Author URI: https://coolplugins.net/
  * License:GPL2
  * Text Domain:cfef
- * Elementor tested up to: 3.25.10
+ * Elementor tested up to: 3.26.0
  * Elementor Pro tested up to: 3.25.3
  *
  * @package cfef
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 if ( ! defined( 'CFEF_VERSION' ) ) {
-	define( 'CFEF_VERSION', '1.3.6' );
+	define( 'CFEF_VERSION', '1.3.7' );
 }
 /*** Defined constent for later use */
 define( 'CFEF_FILE', __FILE__ );
@@ -149,12 +149,11 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 			$message = sprintf(
 				// translators: %1$s replace with Conditional Fields for Elementor Form & %2$s replace with Elementor Pro.
 				esc_html__(
-					'%1$s requires %2$s or %3$s to be installed and activated.',
+					'%1$s requires %2$s to be installed and activated.',
 					'cfef'
 				),
 				esc_html__( 'Conditional Fields for Elementor Form', 'cfef' ),
 				esc_html__( 'Elementor Pro', 'cfef' ),
-				esc_html__( 'Pro Elements', 'cfef' )
 			); 
 			printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', esc_html( $message ) );
 			deactivate_plugins( plugin_basename( __FILE__ ) );
