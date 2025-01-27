@@ -393,7 +393,7 @@
         //add conditional fields on popup form when page load
         $(document).on('elementor/popup/show', function() {
             $(".elementor-form").each(function() {
-                var form = $(this).closest(".elementor-widget-container");
+                var form = $(this).closest(".elementor-widget-form");
                 addHiddenClass(form);
                 logicLoad(form);
             });
@@ -402,7 +402,7 @@
      //add conditional fields on form when page load
         window.addEventListener('elementor/frontend/init', function() {
             $(".elementor-form").each(function() {
-                var form = $(this).closest(".elementor-widget-container");
+                var form = $(this).closest(".elementor-widget-form");
                  addHiddenClass(form);
                  logicLoad(form);
             });
@@ -411,7 +411,7 @@
         // Update form filed hidden status after form submit
         jQuery(document).on('submit_success', function(e, data) {
             setTimeout(()=>{
-                    var form = jQuery(e.target).closest(".elementor-widget-container");
+                    var form = jQuery(e.target).closest(".elementor-widget-form");
                     logicLoad(form);
             },200)
         });
@@ -419,7 +419,7 @@
 
         // validate condtions when any changes apply to any form fields
         $("body").on("input change", ".elementor-form input, .elementor-form select, .elementor-form textarea", function(e) {
-            var form = $(this).closest(".elementor-widget-container");
+            var form = $(this).closest(".elementor-widget-form");
             logicLoad(form);
         });
 
