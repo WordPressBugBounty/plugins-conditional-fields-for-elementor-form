@@ -192,8 +192,8 @@
             } else if (formField.hasClass("elementor-field-type-checkbox") && formField.find('input[value="newchkTest"]').length !== 0) {
                 formField.find('input[value="newchkTest"]').closest("span.elementor-field-option").remove();
             } else if (formField.hasClass("elementor-field-type-date") && formField.find("input").val() === "1003-01-01") {
-                let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
-                formField.find("input").val(value);
+                formField.find("input")[0].value = ''
+                flatpickr(formField.find("input")[0], {});
             } else if (formField.hasClass("elementor-field-type-time") && formField.find("input").val() === "11:59") {
                 let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
                 formField.find("input").val(value);
@@ -278,22 +278,37 @@
                 }
             } 
             else if (formField.hasClass("elementor-field-type-date")) {
-                if(formField.find("input.flatpickr-mobile[type='date']")){
-                    let inputField = formField.find("input.flatpickr-mobile");
-                    inputField.attr("type", "text");
+                let value = formField.find("input").val()
+                if(value === ""){
+                    if(formField.find("input.flatpickr-mobile[type='date']")){
+                        let inputField = formField.find("input.flatpickr-mobile");
+                        inputField.attr("type", "text");
+                    }
+                    formField.find("input").val("1003-01-01");
                 }
-                formField.find("input").val("1003-01-01");
             } 
             else if (formField.hasClass("elementor-field-type-time")) {
-                formField.find("input").val("11:59");
+                let value = formField.find("input").val() 
+                if(value === ""){
+                    formField.find("input").val("11:59");
+                }
             } else if (formField.hasClass("elementor-field-type-tel")) {
                 // Remove the pattern attribute
-                formField.find("input").removeAttr("pattern");
-                formField.find("input").val("+1234567890");
+                let value = formField.find("input").val() 
+                if(value === ""){
+                    formField.find("input").removeAttr("pattern");
+                    formField.find("input").val("+1234567890");
+                }
             } else if (formField.hasClass("elementor-field-type-url")) {
-                formField.find("input").val("https://testing.com");
+                let value = formField.find("input").val()
+                if(value === ""){
+                    formField.find("input").val("https://testing.com");
+                } 
             } else if (formField.hasClass("elementor-field-type-email")) {
-                formField.find("input").val("cool_plugins@abc.com");
+                let value = formField.find("input").val()
+                if(value === ""){
+                    formField.find("input").val("cool_plugins@abc.com");
+                }
             } 
             else if (formField.hasClass("elementor-field-type-upload")) {
                 const firstType = file_types.split(',')[0];
@@ -310,18 +325,23 @@
             }
             else if (formField.hasClass("elementor-field-type-number")) {
                 var FieldValues = formField.find("input").val();
-                var field_obj = formField.find("input");
-                var max_v = parseInt(field_obj.attr('max'));
-                var min_v = parseInt(field_obj.attr('min'));
-                if (!isNaN(min_v)) {
-                    formField.find("input").val(min_v + 1);
-                } else if (!isNaN(max_v)) {
-                    formField.find("input").val(max_v - 1);
-                } else {
-                    formField.find("input").val("000");
+                if(FieldValues === ""){
+                    var field_obj = formField.find("input");
+                    var max_v = parseInt(field_obj.attr('max'));
+                    var min_v = parseInt(field_obj.attr('min'));
+                    if (!isNaN(min_v)) {
+                        formField.find("input").val(min_v + 1);
+                    } else if (!isNaN(max_v)) {
+                        formField.find("input").val(max_v - 1);
+                    } else {
+                        formField.find("input").val("000");
+                    }
                 }
             } else if (formField.hasClass("elementor-field-type-textarea")) {
-                formField.find("textarea").val("cool_plugins");
+                let value = formField.find("textarea").val() 
+                if(value === ""){
+                    formField.find("textarea").val("cool_plugins");
+                }
             } else if (formField.hasClass("elementor-field-type-select")) {
                 var selectBox = formField.find("select");
                 var optionText = 'Premium1@';
@@ -334,7 +354,10 @@
                     selectBox.val(optionValue);
                 }
             } else if (formField.hasClass("elementor-field-type-text")) {
-                formField.find("input").val("cool23plugins");
+                let value = formField.find("input").val()
+                if(value === ""){
+                    formField.find("input").val("cool23plugins");
+                }
             } else {
                 const inputField=formField.find("input");
                 if(inputField.length > 0){

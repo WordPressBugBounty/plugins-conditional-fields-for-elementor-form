@@ -44,7 +44,8 @@ class Create_Conditional_Fields {
 	 * Js and css files loaded for frontend form validation check
 	 */
 	public function add_assets_files() {
-		wp_register_script( 'cfef_logic', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend.min.js', array( 'jquery' ), CFEF_VERSION, true );
+		// wp_register_script( 'cfef_logic', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend.min.js', array( 'jquery' ), CFEF_VERSION, true );
+		wp_register_script( 'cfef_logic', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend.js', array( 'jquery' ), CFEF_VERSION, true );
 		wp_localize_script(
 			'cfef_logic',
 			'my_script_vars',
