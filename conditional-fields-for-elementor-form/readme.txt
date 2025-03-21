@@ -2,13 +2,13 @@
 Contributors: coolplugins,narinder-singh,satindersingh
 Tags: conditional-logic, dynamic-visibility, elementor-form, form-builder, elementor
 Requires at least: 5.0
-Tested up to: 6.7
+Tested up to: 6.7.2
 Requires PHP: 7.2
-Stable tag: 1.3.10
+Stable tag: 1.3.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Elementor tested up to: 3.27.1
-Elementor Pro tested up to: 3.27.0
+Elementor tested up to: 3.28.0
+Elementor Pro tested up to: 3.28.0
 
 Add conditions to Elementor form fields to hide or show a form field based on inputs from other fields, using if-else conditional logic.
 
@@ -192,6 +192,10 @@ Save or update the page and see the results and actions!
 == Upgrade Notice == 
  
 == Changelog ==
+
+### Version 1.3.11 | Mar 21, 2025
+- **Tested upto:** Elementor Version 3.28.0
+- **Tested upto:** Elementor Pro Version 3.28.0
 
 ### Version 1.3.10 | Feb 11, 2025
 - **Minor Textual Changes**
