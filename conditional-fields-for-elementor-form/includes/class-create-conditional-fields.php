@@ -32,10 +32,13 @@ class Create_Conditional_Fields {
 	 */
 	public function __construct() {
 		add_action( 'elementor-pro/forms/pre_render', array( $this, 'all_field_conditions' ), 10, 3 );
+		add_action( 'elementor/frontend/widget/before_render', array( $this, 'all_field_conditions' ), 10, 3 );
 		add_action( 'elementor/element/form/section_form_fields/before_section_end', array( $this, 'append_conditional_fields_controler' ), 10, 2 );
+		add_action( 'elementor/element/ehp-form/section_form_fields/before_section_end', array( $this, 'append_conditional_fields_controler' ), 10, 2 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_assets_files' ) );
 		add_action( 'elementor/controls/register', array( $this, 'register_fields_repeater_controler' ) );
 		add_action( 'elementor_pro/forms/validation', array( $this, 'check_validation' ), 9, 3 );
+		add_action( 'hello_plus/forms/validation', array( $this, 'check_validation' ), 9, 3 );
 		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'add_editor_js' ) );
 		add_action( 'wp_ajax_cfef_elementor_review_notice', array( $this, 'cfef_elementor_review_notice' ) );
 	}
@@ -44,17 +47,26 @@ class Create_Conditional_Fields {
 	 * Js and css files loaded for frontend form validation check
 	 */
 	public function add_assets_files() {
-		// wp_register_script( 'cfef_logic', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend.min.js', array( 'jquery' ), CFEF_VERSION, true );
-		wp_register_script( 'cfef_logic', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend.js', array( 'jquery' ), CFEF_VERSION, true );
-		wp_localize_script(
-			'cfef_logic',
-			'my_script_vars',
-			array(
-				'pluginConstant' => CFEF_PLUGIN_DIR,
-			)
-		);
-		wp_enqueue_script( 'cfef_logic' );
-		 // Add hidden class CSS
+		// Register scripts based on active plugins
+		if (is_plugin_active('elementor-pro/elementor-pro.php') || is_plugin_active('pro-elements/pro-elements.php')) {
+			wp_register_script( 'cfef_logic', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend.min.js', array( 'jquery' ), CFEF_VERSION, true );
+			wp_enqueue_script( 'cfef_logic' );
+		}
+		
+		if (is_plugin_active('hello-plus/hello-plus.php')) {
+			// wp_register_script( 'cfef_logic_hello', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend_hello.min.js', array( 'jquery' ), CFEF_VERSION, true );
+			wp_register_script( 'cfef_logic_hello', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend_hello.js', array( 'jquery' ), CFEF_VERSION, true );
+			wp_localize_script(
+				'cfef_logic_hello',
+				'my_script_vars',
+				array(
+					'pluginConstant' => CFEF_PLUGIN_DIR,
+				)
+			);
+			wp_enqueue_script( 'cfef_logic_hello' );
+		}
+
+		// Add hidden class CSS
 		wp_register_style( 'hide_field_class_style', false );
 		wp_enqueue_style( 'hide_field_class_style' );
 		wp_add_inline_style(
@@ -96,7 +108,7 @@ class Create_Conditional_Fields {
 						'tabs_wrapper' => 'form_fields_tabs',
 						'name'         => 'form_fields_conditions_tab',
 						'condition'    => array(
-							'field_type' => array( 'text', 'email', 'textarea', 'number', 'select', 'radio', 'checkbox', 'tel', 'url', 'date', 'time', 'html', 'upload', 'recaptcha', 'recaptcha_v3', 'password', 'acceptance', 'step' ),
+							'field_type' => array( 'text', 'email', 'textarea', 'number', 'select', 'radio', 'checkbox', is_plugin_active('hello-plus/hello-plus.php') ? 'ehp-tel' : 'tel', 'url', 'date', 'time', 'html', 'upload', 'recaptcha', 'recaptcha_v3', 'password', is_plugin_active('hello-plus/hello-plus.php') ? 'ehp-acceptance' : 'acceptance', 'step' ),
 						),
 					),
 				'cfef_logic'                 => array(
@@ -219,7 +231,7 @@ class Create_Conditional_Fields {
 					'type'            => Controls_Manager::SWITCHER,
 					'tab'             => 'content',
 					'condition'       => array(
-						'field_type' => 'tel',
+						'field_type' => is_plugin_active('hello-plus/hello-plus.php') ? 'ehp-tel' : 'tel',
 					),
 					'inner_tab'       => 'form_fields_content_tab',
 					'tabs_wrapper'    => 'form_fields_tabs',
@@ -232,7 +244,7 @@ class Create_Conditional_Fields {
 					'content_classes' => 'get_ccfef_link',
 					'condition'       => array(
 						'cfef_country_code_toggle' => 'yes',
-						'field_type' => 'tel'
+						'field_type' => is_plugin_active('hello-plus/hello-plus.php') ? 'ehp-tel' : 'tel'
 					),
 					'inner_tab'       => 'form_fields_content_tab',
 					'tabs_wrapper'    => 'form_fields_tabs',
@@ -342,15 +354,31 @@ class Create_Conditional_Fields {
 	 * @param  array $instance_var get form all fields.
 	 */
 	public function all_field_conditions( $instance ) {
+		// Check if $instance is an object and has a get_settings() method.
+		if ( is_object( $instance ) && method_exists( $instance, 'get_settings' ) ) {
+			$settings = $instance->get_settings();
+		} else {
+			$settings = $instance;
+		}
+	
+		// Ensure we have form fields data.
+		if ( empty( $settings['form_fields'] ) || ! is_array( $settings['form_fields'] ) ) {
+			return;
+		}
+	
 		$logic_object = array();
-		
-		foreach ( $instance['form_fields'] as $item_index => $field ) :
+
+
+		foreach ( $settings['form_fields'] as $item_index => $field ) {
 			if ( ! empty( $field['cfef_logic'] ) && 'yes' === $field['cfef_logic'] ) {
+				if(!isset($field['cfef_logic_mode']) && !isset($field['cfef_logic_meet'])){
+					continue;
+				}
 				$repeater_data = $field['cfef_repeater_data'];
 				$logic_object[ $field['custom_id'] ] = array(
 					'display_mode' => esc_html( $field['cfef_logic_mode'] ),
 					'fire_action'  => esc_html( $field['cfef_logic_meet'] ),
-					'file_types' => ! empty( $field['file_types'] ) ? esc_html( $field['file_types'] ) : 'png',
+					'file_types'   => ! empty( $field['file_types'] ) ? esc_html( $field['file_types'] ) : 'png',
 				);
 				foreach ( $repeater_data as $key => $data ) {
 					if ( is_array( $data ) ) {
@@ -368,11 +396,23 @@ class Create_Conditional_Fields {
 					}
 				}
 			}
-		endforeach;
+		}
 	
 		$condition = count( $logic_object ) > 0 ? wp_json_encode( $logic_object ) : '';
-		echo '<textarea class="cfef_logic_data_js cfef-hidden">' . esc_textarea( $condition ) . '</textarea>';
+		if ( ! empty( $condition ) ) {
+			if ( is_object( $instance ) && method_exists( $instance, 'get_id' ) ) {
+				$form_id = $instance->get_id();
+			} elseif ( isset( $settings['id'] ) ) {
+				$form_id = $settings['id'];
+			} else {
+				$form_id = uniqid();
+			}
+			$textarea_id = 'cfef_logic_data_' . $form_id;
+			echo '<textarea id="' . esc_attr( $textarea_id ) . '" class="cfef_logic_data_js cfef-hidden" data-form-id="' . esc_attr( $form_id ) . '">' . esc_textarea( $condition ) . '</textarea>';
+		}
+
 	}
+	
 	/**
 	 * Function to validate form before submit and remove hidden fields
 	 *

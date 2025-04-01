@@ -2,13 +2,17 @@
     "use strict";
     
     $(document).ready(function() {
-    
         // function for compare conditional values 
         function checkFieldLogic(compareFieldValue, conditionOperation, compareValue) {            
 
             conditionOperation = decodeHTMLEntities(conditionOperation);
-            compareValue = decodeHTMLEntities(compareValue).trim();
-            compareFieldValue = compareFieldValue.trim();
+            compareValue === null
+            ? decodeHTMLEntities(compareValue)
+            : decodeHTMLEntities(compareValue).trim();
+        compareFieldValue =
+          compareFieldValue === null
+            ? decodeHTMLEntities(compareFieldValue)
+            : compareFieldValue.trim();
 
             var values = compareFieldValue.split(',');
 
@@ -43,35 +47,40 @@
                 try {
                     logicData = jQuery.parseJSON(logicData);
                     $.each(logicData, function(logic_key, logic_value) {
-                        if ($(".elementor-field-group-" + logic_key).hasClass("elementor-field-type-html")) {
-                                
-                            field = $(".elementor-field-group-" + logic_key).closest(".elementor-field-group");
-                        
+                        var field;
+                        if ($(".elementor-field-group-" + logic_key, form).hasClass("elementor-field-type-html")) {
+                            field = $(".elementor-field-group-" + logic_key, form).closest(".elementor-field-group");
                         } else {
-                            var field = getFieldMainDivById(logic_key);
+                            field = getFieldMainDivById(logic_key, form);
                         }
-                        var displayMode= logic_value.display_mode;
+                        
+                        // Ensure field exists before attempting to modify it
+                        if (!field || field.length === 0) {
+                            return; // Skip to the next iteration
+                        }
+        
+                        var displayMode = logic_value.display_mode;
                         var fireAction = logic_value.fire_action;
                         var conditionPassFail = [];
+        
                         $.each(logic_value.logic_data, function(conditional_logic_key, conditional_logic_values) {
-                            if(conditional_logic_values.cfef_logic_field_id)
-                            {
+                            if(conditional_logic_values.cfef_logic_field_id) {
                                 var value_id = getFieldEnteredValue(conditional_logic_values.cfef_logic_field_id, form);
                                 conditionPassFail.push(checkFieldLogic(value_id, conditional_logic_values.cfef_logic_field_is, conditional_logic_values.cfef_logic_compare_value));
-
                             }
                         }); 
-
-                        var conditionResult = fireAction == "All" ? conditionPassFail.every(function(fvalue) { return fvalue === true; }) : conditionPassFail.some(function(fvalue) { return fvalue === true; });
-                        if (displayMode== "show") {
-                            if (conditionResult) {
-                            } else {
+        
+                        var conditionResult = fireAction == "All" ?
+                            conditionPassFail.every(function(fvalue) { return fvalue === true; }) :
+                            conditionPassFail.some(function(fvalue) { return fvalue === true; });
+                            
+                        if (displayMode == "show") {
+                            if (!conditionResult) {
                                 field.addClass("cfef-hidden");
                             }
                         } else {
                             if (conditionResult) {
                                 field.addClass("cfef-hidden");
-                            } else {
                             }
                         }
                     });
@@ -79,52 +88,68 @@
                     console.error("Error parsing JSON:", e);
                 }
             }
-            else {
-            // console.warn("JSON data is empty or undefined");
-            }
-        }
+        }        
         
         
         // function to check all the conditions valid or not . and based on that condition shosw and hide the fields 
-        function logicLoad(form) {
-            var logicData = $(".cfef_logic_data_js", form).val();
+        function logicLoad(form, formId) {
+            var logicData =$('#cfef_logic_data_'+formId).val();
             if (logicData && logicData !== "undefined") {
-                try {
-                        logicData = jQuery.parseJSON(logicData);
-                        $.each(logicData, function(logic_key, logic_value) {
-                            if ($(".elementor-field-group-" + logic_key).hasClass("elementor-field-type-html")) {
-                                    
-                                field = $(".elementor-field-group-" + logic_key).closest(".elementor-field-group");
-                            
-                            } else {
-                                if(jQuery('.elementor-field-group-'+logic_key).hasClass('elementor-field-type-step')){
-                                    setTimeout(()=>{
-                                        jQuery('.elementor-field-group-'+logic_key).find('.e-form__buttons .elementor-field-type-next .elementor-button').attr('id','form-field-'+logic_key)
-
-                                        var field = getFieldMainDivById(logic_key);
-                                        performFieldLogic(field, logic_value, form, logic_key)
-                                    },500)
-                                }
-
-                                var field = getFieldMainDivById(logic_key);
-                                performFieldLogic(field, logic_value, form, logic_key)
-                            }
-                            performFieldLogic(field, logic_value, form, logic_key)
-                        });
-                    } catch (e) {
-                        console.error("Error parsing JSON:", e);
-                        }
-            } 
-            else {
-            // console.warn("JSON data is empty or undefined");
+              try {
+                logicData = jQuery.parseJSON(logicData);
+                $.each(logicData, function (logic_key, logic_value) {
+                  if (
+                    $(".elementor-field-group-" + logic_key, form).hasClass(
+                      "elementor-field-type-html"
+                    )
+                  ) {
+                    field = $(".elementor-field-group-" + logic_key, form).closest(
+                      ".elementor-field-group"
+                    );
+                  } else {
+                    if (
+                      jQuery(".elementor-field-group-" + logic_key, form).hasClass(
+                        "elementor-field-type-step"
+                      )
+                    ) {
+                      setTimeout(() => {
+                        jQuery(".elementor-field-group-" + logic_key, form)
+                          .find(".e-form__buttons")
+                          .find(
+                            ".elementor-field-type-next, .elementor-field-type-submit"
+                          )
+                          .find(".elementor-button")
+                          .attr("id", "form-field-" + logic_key)
+                          .closest(
+                            ".elementor-field-type-next, .elementor-field-type-submit"
+                          )
+                          .addClass("cfef-step-field");
+                        var field = getFieldMainDivById(logic_key, form);
+                        performFieldLogic(
+                          field,
+                          logic_value,
+                          form,
+                          logic_key,
+                          formId
+                        );
+                      }, 500);
+                    }
+                    var field = getFieldMainDivById(logic_key, form);
+                    performFieldLogic(field, logic_value, form, logic_key, formId);
+                  }
+                });
+              } catch (e) {
+                console.error("Error parsing JSON:", e);
+              }
+            } else {
+            
             }
-        }
+          }    
         
-        function performFieldLogic(field, logic_value, form, logic_key){
+        function performFieldLogic(field, logic_value, form, logic_key, formId){
             var displayMode= logic_value.display_mode;
             var fireAction = logic_value.fire_action;
             var file_types = logic_value.file_types;
-
             var conditionPassFail = [];
 
             $.each(logic_value.logic_data, function(conditional_logic_key, conditional_logic_values) {
@@ -166,16 +191,46 @@
                 }
             } else {
                 if (conditionResult) {
-                    field.addClass("cfef-hidden");
-                    if(field.hasClass('elementor-field-required')){
-                        logicFixedRequiredHidden(field, logic_key,file_types);
+                    if (field.hasClass("cfef-step-field")) {
+                        var container = field.closest(".e-form__buttons");
+                    
+                        // Get the inner text of the button (assuming the "Next" button has a data attribute for direction)
+                        var nextButtonText = container
+                          .find('button[id^="form-field-"]')
+                          .text()
+                          .trim();
+                    
+                        // If the message hasn't been added yet, insert it and replace "Next" with the actual button text
+                        if (container.prev(".cfef-step-field-text").length === 0) {
+                          container.before(
+                            '<p class="cfef-step-field-text">No input is required on this step. Just click "' +
+                              nextButtonText +
+                              '" to proceed.</p>'
+                          );
+                        }
+                      } else {
+                        // Check if field exists before adding the class
+                        if (field && field.length > 0) {
+                          field.addClass("cfef-hidden");
+                          if (field.hasClass("elementor-field-required")) {
+                            logicFixedRequiredHidden(field, logic_key, file_types);
+                          }
+                        }
+                      }
+                    } else {
+                      // If the field has the "cfef-step-field" class, remove the appended message
+                      if (field.hasClass("cfef-step-field")) {
+                        var container = field.closest(".e-form__buttons");
+                        container.prev(".cfef-step-field-text").remove();
+                      }
+                      if (field.hasClass("elementor-field-required")) {
+                        logicFixedRequiredShow(field, file_types, "visible");
+                      }
+                      // Check if field exists before removing the class
+                      if (field && field.length > 0) {
+                        field.removeClass("cfef-hidden");
+                      }
                     }
-                } else {
-                    field.removeClass("cfef-hidden");
-                    if(field.hasClass('elementor-field-required')){
-                        logicFixedRequiredShow(field,file_types);
-                    }
-                }
             }
         }
 
@@ -369,56 +424,53 @@
         }
 
                 // Function to get the value of the conditional field 
-        function getFieldEnteredValue(id = "", form = "body") {
-            var inputValue = "";
-            var fieldGroup = $(".elementor-field-group-" + id, form);
-
-            if (fieldGroup.hasClass("elementor-field-type-radio")) {
-                inputValue = fieldGroup.find("input:checked").val();
-            } else if (fieldGroup.hasClass("elementor-field-type-checkbox")) {
-                var multiValue = [];
-
-                // Check if any checkbox is checked
-                var checkboxes = fieldGroup.find("input[type='checkbox']:checked");
-                if (checkboxes.length > 0) {
-                    // Collect values of checked checkboxes
-                    checkboxes.each(function() {
+                function getFieldEnteredValue(id = "", form = "body") {
+                    var inputValue = "";
+                    var fieldGroup = $(".elementor-field-group-" + id, form);
+                  
+                    if (fieldGroup.hasClass("elementor-field-type-radio")) {
+                      inputValue = fieldGroup.find("input:checked").val();
+                    } else if (fieldGroup.hasClass("elementor-field-type-checkbox")) {
+                      var multiValue = [];
+                      fieldGroup.find("input[type='checkbox']:checked").each(function () {
                         multiValue.push($(this).val());
-                    });
-                    inputValue = multiValue.join(", ");
-                } else {
-                    // No checkbox is checked
-                    inputValue = id;
-                }
-            } else if (fieldGroup.hasClass("elementor-field-type-select")) {
-                inputValue = fieldGroup.find("select").val();
-                if(fieldGroup.find("select")[0].multiple){
-                    inputValue=inputValue.join(', ');
-                }
-            } else if (fieldGroup.hasClass("elementor-field-type-textarea")) {
-                inputValue = fieldGroup.find("textarea").val();
-            } else {
-                inputValue = fieldGroup.find("input").val();
-            }
-
-            return inputValue === undefined ? '' : inputValue;
-        }
+                      });
+                      inputValue = multiValue.length ? multiValue.join(", ") : id;
+                    } else if (fieldGroup.hasClass("elementor-field-type-select")) {
+                      inputValue = fieldGroup.find("select", form).val();
+                      if (fieldGroup.find("select")[0].multiple) {
+                        inputValue = inputValue.join(", ");
+                      }
+                    } else if (fieldGroup.hasClass("elementor-field-type-textarea")) {
+                      inputValue = fieldGroup.find("textarea", form).val();
+                    } else {
+                      inputValue = fieldGroup.find("input", form).val();
+                    }
+                    return inputValue === undefined ? '' : inputValue;
+                  }
+                  
         
         // function to get the id of the conditional field 
-        function getFieldMainDivById(id = "") {
-            if ($("#form-field-" + id).length > 0) {
-                return $("#form-field-" + id).closest(".elementor-field-group");
-            } else {
-                return $("#form-field-" + id + "-0").closest(".elementor-field-group");
+        function getFieldMainDivById(id = "", form = null) {
+            if (form) {
+              if ($("#form-field-" + id, form).length > 0) {
+                return $("#form-field-" + id, form).closest(".elementor-field-group");
+              } else {
+                return $("#form-field-" + id + "-0", form).closest(".elementor-field-group");
+              }
             }
-        }
+            return null;
+          }
+          
 
         //add conditional fields on popup form when page load
         $(document).on('elementor/popup/show', function() {
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
+                var formId = form.closest(".elementor-element").attr("data-id");
+                form.attr("data-form-id", "form-" + formId);
                 addHiddenClass(form);
-                logicLoad(form);
+                logicLoad(form, formId);
             });
         });
 
@@ -426,8 +478,10 @@
         window.addEventListener('elementor/frontend/init', function() {
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
-                 addHiddenClass(form);
-                 logicLoad(form);
+                var formId = form.closest(".elementor-element").attr("data-id");
+                form.attr("data-form-id", "form-" + formId);
+                addHiddenClass(form);
+                logicLoad(form, formId);
             });
         });
 
@@ -435,7 +489,9 @@
         jQuery(document).on('submit_success', function(e, data) {
             setTimeout(()=>{
                     var form = jQuery(e.target).closest(".elementor-widget-form");
-                    logicLoad(form);
+                    var formId = form.closest(".elementor-element").attr("data-id");
+                    form.attr("data-form-id", "form-" + formId);
+                    logicLoad(form, formId);
             },200)
         });
 
@@ -443,7 +499,11 @@
         // validate condtions when any changes apply to any form fields
         $("body").on("input change", ".elementor-form input, .elementor-form select, .elementor-form textarea", function(e) {
             var form = $(this).closest(".elementor-widget-form");
-            logicLoad(form);
+            var formId = form.closest(".elementor-element").attr("data-id");
+            form.attr("data-form-id", "form-" + formId);
+
+            var currentFormId = formId;
+            logicLoad(form, currentFormId);
         });
 
     

@@ -11,6 +11,11 @@ class cfef_feedback {
 		private $plugin_name    = 'conditional-fields-for-elementor-form';
 		private $plugin_slug    = 'cfef';
 		// private $feedback_url   = 'http://feedback.coolplugins.net/wp-json/coolplugins-feedback/v1/feedback';
+		private $installation_date_option = 'cfef-installDate';
+		private $review_option = 'cfef_elementor_notice_dismiss';
+		private $buy_link = 'https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get-pro&utm_content=get-pro#pricing';
+		private $review_link = 'https://wordpress.org/support/plugin/conditional-fields-for-elementor-form/reviews/#new-post';
+		private $plugin_logo = 'assets/images/conditional-fields.png';
 
 	/*
 	|-----------------------------------------------------------------|
@@ -22,6 +27,8 @@ class cfef_feedback {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_feedback_scripts' ) );
 		add_action( 'admin_head', array( $this, 'show_deactivate_feedback_popup' ) );
 		add_action( 'wp_ajax_' . $this->plugin_slug . '_submit_deactivation_response', array( $this, 'submit_deactivation_response' ) );
+		add_action( 'admin_notices', array( $this, 'cfef_admin_notice_for_review' ) );
+		add_action( 'wp_ajax_' . $this->plugin_slug . '_dismiss_notice', array( $this, 'cfef_dismiss_review_notice' ) );
 	}
 
 	/*
@@ -37,6 +44,168 @@ class cfef_feedback {
 		}
 	}
 
+	public function cfef_dismiss_review_notice(){
+		$rs = update_option( $this->review_option, 'yes' );
+		echo json_encode( array( 'success' => 'true' ) );
+		exit;
+	}
+
+	public function cfef_admin_notice_for_review(){
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			return;
+		}
+
+		// get installation dates and rated settings
+		$installation_date = get_option( $this->installation_date_option );
+		$alreadyRated      = get_option( $this->review_option ) != false ? get_option( $this->review_option ) : 'no';
+
+		// check user already rated
+		if ( $alreadyRated == 'yes' ) {
+			return;
+		}
+
+		// grab plugin installation date and compare it with current date
+		$display_date = date( 'Y-m-d h:i:s' );
+		$install_date = new \DateTime( $installation_date );
+		$current_date = new \DateTime( $display_date );
+		$difference   = $install_date->diff( $current_date );
+		$diff_days    = $difference->days;
+
+		// check if installation days is greator then week
+
+		if ( isset( $diff_days ) && $diff_days >= 3 ) {
+			echo $this->cfef_create_notice_content();
+		}
+	}
+
+	function cfef_create_notice_content() {
+		$plugin_buy_button = '';
+		if ( $this->buy_link != '' ) {
+			$plugin_buy_button = '<li><a href="' . $this->buy_link . '" target="_blank" class="buy-pro-btn button button-secondary" title="Buy Pro">Buy Pro</a></li>';
+		}
+
+		$html = '
+		<div data-ajax-url="' . admin_url( 'admin-ajax.php' ) . '" data-ajax-callback="' . $this->plugin_slug . '_dismiss_notice" class="' . $this->plugin_slug . '-review-notice-wrapper notice">
+			<div class="logo_container">
+				<a href="' . esc_url( $this->review_link ) . '" target="_blank"><img src="' . $this->plugin_url . $this->plugin_logo . '" alt="' . $this->plugin_name . '"></a>
+			</div>
+			<div class="message_container">
+				<p>Thanks for using <b>Conditional Fields for Elementor Form</b> WordPress plugin. We hope it meets your expectations!<br/>Please give us a quick rating, it works as a boost for us to keep working on more <a href="https://coolplugins.net" target="_blank"><strong>Cool Plugins</strong></a>!</p>
+				<ul>
+					<li><a href="' . esc_url( $this->review_link ) . '" class="rate-it-btn button button-primary" target="_blank" title="Submit A Review...">Rate Now! ★★★★★</a></li>
+					<li><a href="javascript:void(0);" class="already-rated-btn button button-secondary ' . $this->plugin_slug . '_dismiss_notice" title="Already Rated - Close This Notice!">Already Rated</a></li>
+					<li><a href="javascript:void(0);" class="already-rated-btn button button-secondary ' . $this->plugin_slug . '_dismiss_notice" title="Not Interested - Close This Notice!">Not Interested</a></li>
+					' . $plugin_buy_button . '
+				</ul>
+			</div>
+		</div>
+		';
+
+		// css styles
+		$style = '
+		<style>
+		#wpbody .' . $this->plugin_slug . '-review-notice-wrapper.notice {
+			padding: 5px;
+			margin: 5px 0;
+			display: table;
+			max-width: 820px;
+			border-radius: 5px;
+			border: 1px solid #ced3d6;
+			box-sizing: border-box;
+			box-shadow: 2px 4px 8px -2px rgba(0, 0, 0, 0.1)
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper .logo_container {
+			width: 80px;
+			display: table-cell;
+			padding: 5px;
+			vertical-align: middle;
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper .logo_container a,
+		.' . $this->plugin_slug . '-review-notice-wrapper .logo_container img {
+			width:80px;
+			height:auto;
+			display:inline-block;
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper .message_container {
+			display: table-cell;
+			padding: 5px;
+			vertical-align: middle;
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper p,
+		.' . $this->plugin_slug . '-review-notice-wrapper ul {
+			padding: 0;
+			margin: 0;
+			line-height: 1.25em;
+			display: flow-root;
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper ul {
+			margin-top: 10px;
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper ul li {
+			float: left;
+			margin: 0px 10px 0 0;
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper ul li .button-primary {
+			background:#92013c;
+			text-shadow: none;
+			border-color: #a69516;
+			box-shadow: none;
+			color: #fff;
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper ul li .button-secondary {
+			background: #fff;
+			background-color: #fff;
+			border: 1px solid #757575;
+			color: #757575;
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper ul li .button-secondary.already-rated-btn:after {
+			color: #f12945;
+			content: "\f153";
+			display: inline-block;
+			vertical-align: middle;
+			margin: -1px 0 0 5px;
+			font-size: 14px;
+			line-height: 14px;
+			font-family: dashicons;
+		}
+		.' . $this->plugin_slug . '-review-notice-wrapper ul li .button-primary:hover {
+			background: #222;
+			border-color: #000;
+		}
+		@media screen and (max-width: 660px) {
+			.' . $this->plugin_slug . '-review-notice-wrapper .logo_container{
+				display:none;
+			}
+			.' . $this->plugin_slug . '-review-notice-wrapper .message_container {
+				display: flow-root;
+			}
+		}
+		</style>
+		';
+
+		// close notice script
+		$script = '
+		<script>
+		jQuery(document).ready(function ($) {
+			$(".' . $this->plugin_slug . '_dismiss_notice").on("click", function (event) {
+				var $this = $(this);
+				var wrapper=$this.parents(".' . $this->plugin_slug . '-review-notice-wrapper");
+				var ajaxURL=wrapper.data("ajax-url");
+				var ajaxCallback=wrapper.data("ajax-callback");         
+				$.post(ajaxURL, { "action":ajaxCallback }, function( data ) {
+					wrapper.slideUp("fast");
+				}, "json");
+			});
+		});
+		</script>
+		';
+
+		$html .= '
+		' . $style . '
+		' . $script;
+
+		return $html;
+	}
 	/*
 	|-----------------------------------------------------------------|
 	|   HTML for creating feedback popup form                         |
