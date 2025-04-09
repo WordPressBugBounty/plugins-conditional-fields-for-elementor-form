@@ -136,6 +136,7 @@ $(document).ready(function() {
                 var field = getFieldMainDivById(logic_key, form);
                 performFieldLogic(field, logic_value, form, logic_key, formId);
               }
+              performFieldLogic(field, logic_value, form, logic_key, formId);
             });
           } catch (e) {
             console.error("Error parsing JSON:", e);

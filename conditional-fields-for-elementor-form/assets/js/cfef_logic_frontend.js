@@ -137,6 +137,7 @@
                     var field = getFieldMainDivById(logic_key, form);
                     performFieldLogic(field, logic_value, form, logic_key, formId);
                   }
+                  performFieldLogic(field, logic_value, form, logic_key, formId);
                 });
               } catch (e) {
                 console.error("Error parsing JSON:", e);
@@ -186,7 +187,7 @@
                 } else {
                     field.addClass("cfef-hidden");
                     if(field.hasClass('elementor-field-required')){
-                        logicFixedRequiredHidden(field, logic_key,file_types);
+                        logicFixedRequiredHidden(field, logic_key,file_types, formId);
                     } 
                 }
             } else {
@@ -213,7 +214,7 @@
                         if (field && field.length > 0) {
                           field.addClass("cfef-hidden");
                           if (field.hasClass("elementor-field-required")) {
-                            logicFixedRequiredHidden(field, logic_key, file_types);
+                            logicFixedRequiredHidden(field, logic_key, file_types, formId);
                           }
                         }
                       }
@@ -240,10 +241,11 @@
                 let checkedRadio = formField.find('input[checked="checked"]')[0]
                 checkedRadio ? $(checkedRadio).prop('checked', true):  $(checkedRadio).prop('checked', false)
             } else if (formField.hasClass("elementor-field-type-acceptance")) {
-                const acceptanceInput = formField.find('.elementor-field-subgroup .elementor-field-option input')[0]
-                if (formField.hasClass("cfef-hidden") && acceptanceInput && acceptanceInput.checked === true && status === "visible" && !jQuery(acceptanceInput).attr('checked')) {
-                    acceptanceInput.checked = false
-                }
+                const acceptanceInput = formField.find('.elementor-field-subgroup .elementor-field-option input')
+                if (acceptanceInput.hasClass("acceptance_check_toggle")) {
+                    acceptanceInput[0].checked = false;
+                    acceptanceInput.removeClass("acceptance_check_toggle");
+                  }
             } else if (formField.hasClass("elementor-field-type-checkbox") && formField.find('input[value="newchkTest"]').length !== 0) {
                 formField.find('input[value="newchkTest"]').closest("span.elementor-field-option").remove();
             } else if (formField.hasClass("elementor-field-type-date") && formField.find("input").val() === "1003-01-01") {
@@ -299,10 +301,10 @@
         }
         
             // Add the default value when form Field is hidden
-        function logicFixedRequiredHidden(formField, fieldKey, file_types) {
+        function logicFixedRequiredHidden(formField, fieldKey, file_types, formId) {
             if (formField.hasClass("elementor-field-type-radio")) {
                 var groupclass = '.elementor-field-group-' + fieldKey;
-                const field2 = $(groupclass);
+                const field2 = $(groupclass, $(`[data-form-id="form-${formId}"]`));
 
                 if (field2.length > 0) {
                     if (field2.find('input[value="^newOptionTest"]').length === 0) {
@@ -316,12 +318,13 @@
                 }
             } else if (formField.hasClass("elementor-field-type-acceptance")) {
                 const acceptanceInput = formField.find('.elementor-field-subgroup .elementor-field-option input')[0]
+                jQuery(acceptanceInput).addClass("acceptance_check_toggle");
                 if (acceptanceInput) {
                     acceptanceInput.checked = true;
                 }
             } else if (formField.hasClass("elementor-field-type-checkbox")) {
                 var groupclass = '.elementor-field-group-' + fieldKey;
-                const field2 = $(groupclass);
+                const field2 = $(groupclass, $(`[data-form-id="form-${formId}"]`));
 
                 if (field2.length > 0) {
                     if (field2.find('input[value="newchkTest"]').length === 0) {
@@ -331,8 +334,7 @@
                         field2.find('.elementor-field-subgroup').append(newOption);
                     }
                 }
-            } 
-            else if (formField.hasClass("elementor-field-type-date")) {
+            } else if (formField.hasClass("elementor-field-type-date")) {
                 let value = formField.find("input").val()
                 if(value === ""){
                     if(formField.find("input.flatpickr-mobile[type='date']")){
@@ -341,14 +343,12 @@
                     }
                     formField.find("input").val("1003-01-01");
                 }
-            } 
-            else if (formField.hasClass("elementor-field-type-time")) {
+            } else if (formField.hasClass("elementor-field-type-time")) {
                 let value = formField.find("input").val() 
                 if(value === ""){
                     formField.find("input").val("11:59");
                 }
             } else if (formField.hasClass("elementor-field-type-tel")) {
-                // Remove the pattern attribute
                 let value = formField.find("input").val() 
                 if(value === ""){
                     formField.find("input").removeAttr("pattern");
@@ -364,21 +364,17 @@
                 if(value === ""){
                     formField.find("input").val("cool_plugins@abc.com");
                 }
-            } 
-            else if (formField.hasClass("elementor-field-type-upload")) {
+            } else if (formField.hasClass("elementor-field-type-upload")) {
                 const firstType = file_types.split(',')[0];
-                const fileName = `${my_script_vars.pluginConstant}assets/images/placeholder.${firstType}`; // Set the desired filename
+                const fileName = `${my_script_vars.pluginConstant}assets/images/placeholder.${firstType}`;
                 const defaultImage = new File([], fileName, { type: 'image/png' });
                 const fileInput = formField.find('input[type="file"]');
                 
-                // Create a DataTransfer object to handle file operations
                 const container = new DataTransfer();
                 container.items.add(defaultImage);
                 
-                // Set the files property of the file input field to the default image
                 fileInput[0].files = container.files;
-            }
-            else if (formField.hasClass("elementor-field-type-number")) {
+            } else if (formField.hasClass("elementor-field-type-number")) {
                 var FieldValues = formField.find("input").val();
                 if(FieldValues === ""){
                     var field_obj = formField.find("input");
@@ -414,12 +410,12 @@
                     formField.find("input").val("cool23plugins");
                 }
             } else {
-                const inputField=formField.find("input");
+                const formContainer = $(`[data-form-id="form-${formId}"]`);
+                const inputField = formField.find("input", formContainer);
                 if(inputField.length > 0){
-                    const inputId=inputField[0].id
-                    jQuery(`#${inputId}`)[0].setAttribute('value','cool23plugins')
+                    const inputId = inputField[0].id;
+                    jQuery(`#${inputId}`, formContainer)[0].setAttribute('value','cool23plugins');
                 }
-                // formField.find("input").val("cool23plugins");
             }
         }
 
@@ -443,6 +439,14 @@
                       }
                     } else if (fieldGroup.hasClass("elementor-field-type-textarea")) {
                       inputValue = fieldGroup.find("textarea", form).val();
+                    }else if(fieldGroup.hasClass("elementor-field-type-acceptance")){
+                      let acceptanceInput = fieldGroup.find('.elementor-field-subgroup .elementor-field-option input');
+                      inputValue = "";
+                        acceptanceInput.each(function() {
+                            if (jQuery(this).is(":checked")) {
+                                inputValue = "on";
+                            }
+                        });
                     } else {
                       inputValue = fieldGroup.find("input", form).val();
                     }
@@ -467,7 +471,7 @@
         $(document).on('elementor/popup/show', function() {
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
-                var formId = form.closest(".elementor-element").attr("data-id");
+                var formId = form.find(".elementor-widget-container textarea").attr("data-form-id");
                 form.attr("data-form-id", "form-" + formId);
                 addHiddenClass(form);
                 logicLoad(form, formId);
@@ -478,7 +482,7 @@
         window.addEventListener('elementor/frontend/init', function() {
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
-                var formId = form.closest(".elementor-element").attr("data-id");
+                var formId = form.find(".elementor-widget-container textarea").attr("data-form-id");
                 form.attr("data-form-id", "form-" + formId);
                 addHiddenClass(form);
                 logicLoad(form, formId);
@@ -489,8 +493,8 @@
         jQuery(document).on('submit_success', function(e, data) {
             setTimeout(()=>{
                     var form = jQuery(e.target).closest(".elementor-widget-form");
-                    var formId = form.closest(".elementor-element").attr("data-id");
-                    form.attr("data-form-id", "form-" + formId);
+                    var formId = form.find(".elementor-widget-container textarea").attr("data-form-id");
+          form.attr("data-form-id", "form-" + formId);
                     logicLoad(form, formId);
             },200)
         });
@@ -499,8 +503,8 @@
         // validate condtions when any changes apply to any form fields
         $("body").on("input change", ".elementor-form input, .elementor-form select, .elementor-form textarea", function(e) {
             var form = $(this).closest(".elementor-widget-form");
-            var formId = form.closest(".elementor-element").attr("data-id");
-            form.attr("data-form-id", "form-" + formId);
+            var formId = form.find(".elementor-widget-container textarea").attr("data-form-id");
+          form.attr("data-form-id", "form-" + formId);
 
             var currentFormId = formId;
             logicLoad(form, currentFormId);
