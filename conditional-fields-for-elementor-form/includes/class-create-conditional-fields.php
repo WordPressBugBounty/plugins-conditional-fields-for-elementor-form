@@ -32,7 +32,7 @@ class Create_Conditional_Fields {
 	 */
 	public function __construct() {
 		add_action( 'elementor-pro/forms/pre_render', array( $this, 'all_field_conditions' ), 10, 3 );
-		add_action( 'elementor/frontend/widget/before_render', array( $this, 'all_field_conditions' ), 10, 3 );
+		add_action( 'elementor/frontend/widget/before_render', array( $this, 'all_field_conditions_hello' ), 10, 3 );
 		add_action( 'elementor/element/form/section_form_fields/before_section_end', array( $this, 'append_conditional_fields_controler' ), 10, 2 );
 		add_action( 'elementor/element/ehp-form/section_form_fields/before_section_end', array( $this, 'append_conditional_fields_controler' ), 10, 2 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_assets_files' ) );
@@ -353,7 +353,7 @@ class Create_Conditional_Fields {
 	 *
 	 * @param  array $instance_var get form all fields.
 	 */
-	public function all_field_conditions( $instance ) {
+	public function all_field_conditions( $instance, $widget ) {
 		// Check if $instance is an object and has a get_settings() method.
 		if ( is_object( $instance ) && method_exists( $instance, 'get_settings' ) ) {
 			$settings = $instance->get_settings();
@@ -399,19 +399,25 @@ class Create_Conditional_Fields {
 		}
 	
 		$condition = count( $logic_object ) > 0 ? wp_json_encode( $logic_object ) : '';
+		
 		if ( ! empty( $condition ) ) {
-			if ( is_object( $instance ) && method_exists( $instance, 'get_id' ) ) {
-				$form_id = $instance->get_id();
-			} elseif ( isset( $settings['id'] ) ) {
-				$form_id = $settings['id'];
-			} else {
-				$form_id = uniqid();
+			if ( is_object( $widget ) && method_exists( $widget, 'get_id' ) ) {
+				$form_id = $widget->get_id();
 			}
 			$textarea_id = 'cfef_logic_data_' . $form_id;
 			echo '<textarea id="' . esc_attr( $textarea_id ) . '" class="cfef_logic_data_js cfef-hidden" data-form-id="' . esc_attr( $form_id ) . '">' . esc_textarea( $condition ) . '</textarea>';
 		}
 
 	}
+
+	public function all_field_conditions_hello($widget){
+		if(method_exists($widget, 'get_name') && $widget->get_name() == 'ehp-form'){
+			$settings = $widget->get_settings_for_display();
+			$instance = $widget;
+			$this->all_field_conditions($settings, $instance);
+		}
+	}
+	
 	
 	/**
 	 * Function to validate form before submit and remove hidden fields

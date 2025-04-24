@@ -471,7 +471,7 @@
         $(document).on('elementor/popup/show', function() {
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
-                var formId = form.find(".elementor-widget-container textarea").attr("data-form-id");
+                var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
                 form.attr("data-form-id", "form-" + formId);
                 addHiddenClass(form);
                 logicLoad(form, formId);
@@ -482,7 +482,7 @@
         window.addEventListener('elementor/frontend/init', function() {
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
-                var formId = form.find(".elementor-widget-container textarea").attr("data-form-id");
+                var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
                 form.attr("data-form-id", "form-" + formId);
                 addHiddenClass(form);
                 logicLoad(form, formId);
@@ -493,7 +493,7 @@
         jQuery(document).on('submit_success', function(e, data) {
             setTimeout(()=>{
                     var form = jQuery(e.target).closest(".elementor-widget-form");
-                    var formId = form.find(".elementor-widget-container textarea").attr("data-form-id");
+                    var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
           form.attr("data-form-id", "form-" + formId);
                     logicLoad(form, formId);
             },200)
@@ -503,9 +503,8 @@
         // validate condtions when any changes apply to any form fields
         $("body").on("input change", ".elementor-form input, .elementor-form select, .elementor-form textarea", function(e) {
             var form = $(this).closest(".elementor-widget-form");
-            var formId = form.find(".elementor-widget-container textarea").attr("data-form-id");
+            var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
           form.attr("data-form-id", "form-" + formId);
-
             var currentFormId = formId;
             logicLoad(form, currentFormId);
         });
