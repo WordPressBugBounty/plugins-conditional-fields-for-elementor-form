@@ -4,11 +4,11 @@ Tags: conditional-logic, dynamic-visibility, elementor-form, form-builder, eleme
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.2
-Stable tag: 1.3.15
+Stable tag: 1.3.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Elementor tested up to: 3.28.4
-Elementor Pro tested up to: 3.28.3
+Elementor Pro tested up to: 3.28.4
 
 Add conditions to Elementor form fields to hide or show a form field based on inputs from other fields, using if-else conditional logic.
 
@@ -25,8 +25,6 @@ Add conditions to Elementor form fields to hide or show a form field based on in
 https://youtu.be/j9-KlEaYgls
 
 **Elementor Pro does not support conditional logic inside its form widget fields, so we created Conditional Field addon. It provides you with the option to enable conditions on Elementor form fields, allowing you to hide or show a form field based on the inputs from other fields.**
-
-**NOTE:** This addon is only compatible with the Elementor Pro version because the form widget is not available in the free version of Elementor.
 
 ### PLUGIN FEATURES
 — —————————————- —
@@ -115,9 +113,6 @@ Add advanced fields and features to Elementor form widget, like **conditional fi
 
 == Frequently Asked Questions ==
 
-### Why do I need to install Elementor Pro to use this plugin?
-This addon enhances the Elementor form widget by applying conditions to its fields. The form widget is only available in the Elementor Pro version, so you must install Elementor Pro to use this addon.
-
 ### Which operators can I use to compare conditional field values?
 You can trigger conditions on a field by comparing values with several operators:
 
@@ -199,20 +194,23 @@ Save or update the page and see the results and actions!
  
 == Changelog ==
 
+### Version 1.3.16 | May 16, 2025
+- **Improved:** Minor code improvements.
+
 ### Version 1.3.15 | Apr 24, 2025
-- **Fixed:** Minor bug fixes and improvements
+- **Fixed:** Minor bug fixes and improvements.
 
 ### Version 1.3.14 | Apr 9, 2025
 - **Tested upto:** wordpress Version 6.8
-- **Improved:** Independent Form Handling
+- **Improved:** Independent Form Handling.
 
 ### Version 1.3.13 | Apr 5, 2025
-- **Fixed:** HTML Field issue
+- **Fixed:** HTML Field issue.
 
 ### Version 1.3.12 | Apr 1, 2025
-- **Added:** Compatibilty with Hello Plus Form
-- **Fixed:** Minor bug fixes and improvements
-- **Improved:** Independent Form Handling
+- **Added:** Compatibilty with Hello Plus Form.
+- **Fixed:** Minor bug fixes and improvements.
+- **Improved:** Independent Form Handling.
 
 ### Version 1.3.11 | Mar 21, 2025
 - **Tested upto:** Elementor Version 3.28.0

@@ -42,7 +42,7 @@
 
         // function to add hidden class when form load
         function addHiddenClass(form) {
-            var logicData = $(".cfef_logic_data_js", form).val();
+           var logicData = $(".cfef_logic_data_js", form).html();
             if (logicData && logicData !== "undefined") {
                 try {
                     logicData = jQuery.parseJSON(logicData);
@@ -93,7 +93,7 @@
         
         // function to check all the conditions valid or not . and based on that condition shosw and hide the fields 
         function logicLoad(form, formId) {
-            var logicData =$('#cfef_logic_data_'+formId).val();
+            var logicData =$('#cfef_logic_data_'+formId).html();
             if (logicData && logicData !== "undefined") {
               try {
                 logicData = jQuery.parseJSON(logicData);

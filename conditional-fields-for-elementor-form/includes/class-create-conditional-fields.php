@@ -404,8 +404,9 @@ class Create_Conditional_Fields {
 			if ( is_object( $widget ) && method_exists( $widget, 'get_id' ) ) {
 				$form_id = $widget->get_id();
 			}
-			$textarea_id = 'cfef_logic_data_' . $form_id;
-			echo '<textarea id="' . esc_attr( $textarea_id ) . '" class="cfef_logic_data_js cfef-hidden" data-form-id="' . esc_attr( $form_id ) . '">' . esc_textarea( $condition ) . '</textarea>';
+			$template_id = 'cfef_logic_data_' . $form_id;			
+			
+			echo '<template id="' . esc_attr( $template_id ) . '" class="cfef_logic_data_js" data-form-id="' . esc_attr( $form_id ) . '">' . wp_kses_post( $condition ) . '</template>';
 		}
 
 	}
