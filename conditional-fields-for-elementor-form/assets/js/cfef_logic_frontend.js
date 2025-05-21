@@ -41,8 +41,8 @@
         }
 
         // function to add hidden class when form load
-        function addHiddenClass(form) {
-           var logicData = $(".cfef_logic_data_js", form).html();
+        function addHiddenClass(form, formId) {
+           var logicData = $('#cfef_logic_data_'+formId).html();
             if (logicData && logicData !== "undefined") {
                 try {
                     logicData = jQuery.parseJSON(logicData);
@@ -472,8 +472,16 @@
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
                 var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
-                form.attr("data-form-id", "form-" + formId);
-                addHiddenClass(form);
+                addHiddenClass(form, formId);
+                logicLoad(form, formId);
+            });
+        });
+
+        $(document).ready(function(){
+            $(".elementor-form").each(function() {
+                var form = $(this).closest(".elementor-widget-form");
+                var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
+                addHiddenClass(form, formId);
                 logicLoad(form, formId);
             });
         });
@@ -483,8 +491,7 @@
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
                 var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
-                form.attr("data-form-id", "form-" + formId);
-                addHiddenClass(form);
+                addHiddenClass(form, formId);
                 logicLoad(form, formId);
             });
         });
@@ -494,7 +501,6 @@
             setTimeout(()=>{
                     var form = jQuery(e.target).closest(".elementor-widget-form");
                     var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
-          form.attr("data-form-id", "form-" + formId);
                     logicLoad(form, formId);
             },200)
         });
@@ -504,9 +510,7 @@
         $("body").on("input change", ".elementor-form input, .elementor-form select, .elementor-form textarea", function(e) {
             var form = $(this).closest(".elementor-widget-form");
             var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
-          form.attr("data-form-id", "form-" + formId);
-            var currentFormId = formId;
-            logicLoad(form, currentFormId);
+            logicLoad(form, formId);
         });
 
     

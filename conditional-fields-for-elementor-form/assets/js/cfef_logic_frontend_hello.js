@@ -41,8 +41,9 @@ $(document).ready(function() {
     }
 
     // function to add hidden class when form load
-    function addHiddenClass(form) {
-        var logicData = $(form).find(".cfef_logic_data_js").val();
+    function addHiddenClass(form, formId) {
+        var logicData =$('#cfef_logic_data_'+formId).html();
+     
         if (logicData && logicData !== "undefined") {
             try {
                 logicData = jQuery.parseJSON(logicData);
@@ -53,7 +54,6 @@ $(document).ready(function() {
                     } else {
                         field = getFieldMainDivById(logic_key, form);
                     }
-                    
                     // Ensure field exists before attempting to modify it
                     if (!field || field.length === 0) {
                         return; // Skip to the next iteration
@@ -92,7 +92,7 @@ $(document).ready(function() {
     
     // function to check all the conditions valid or not . and based on that condition shosw and hide the fields 
     function logicLoad(form, formId) {
-        var logicData =$('#cfef_logic_data_'+formId).val();
+        var logicData =$('#cfef_logic_data_'+formId).html();
         if (logicData && logicData !== "undefined") {
           try {
             logicData = jQuery.parseJSON(logicData);
@@ -464,8 +464,16 @@ $(document).ready(function() {
         $(".ehp-form").each(function() {
             var form = $(this).closest(".elementor-widget-ehp-form");
             var formId = form.closest(".elementor-element").attr("data-id");
-            form.attr("data-form-id", "form-" + formId);
-            addHiddenClass(form);
+            addHiddenClass(form, formId);
+            logicLoad(form, formId);
+        });
+    });
+
+    $(document).ready(function(){
+        $(".ehp-form").each(function() {
+            var form = $(this).closest(".elementor-widget-ehp-form");
+            var formId = form.closest(".elementor-element").attr("data-id");
+            addHiddenClass(form, formId);
             logicLoad(form, formId);
         });
     });
@@ -474,9 +482,8 @@ $(document).ready(function() {
     window.addEventListener('elementor/frontend/init', function() {
         $(".ehp-form").each(function() {
             var form = $(this).closest(".elementor-widget-ehp-form");
-            var formId = form.closest(".elementor-element").attr("data-id");
-            form.attr("data-form-id", "form-" + formId);
-            addHiddenClass(form);
+            var formId = form.closest(".elementor-element").attr("data-id")
+            addHiddenClass(form, formId);
             logicLoad(form, formId);
         });
     });
@@ -486,7 +493,6 @@ $(document).ready(function() {
         setTimeout(()=>{
             var form = jQuery(e.target).closest(".elementor-widget-ehp-form");
             var formId = form.closest(".elementor-element").attr("data-id");
-            form.attr("data-form-id", "form-" + formId);
             logicLoad(form, formId);
         },200)
     });
@@ -495,9 +501,6 @@ $(document).ready(function() {
     $("body").on("input change", ".elementor-widget-ehp-form input, .elementor-widget-ehp-form select, .elementor-widget-ehp-form textarea", function(e) {
         var form = $(this).closest(".elementor-widget-ehp-form");
         var formId = form.closest(".elementor-element").attr("data-id");
-        form.attr("data-form-id", "form-" + formId);
-
-        // Only apply logic to this specific form
         logicLoad(form, formId);
     });
 

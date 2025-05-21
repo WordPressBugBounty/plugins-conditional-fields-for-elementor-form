@@ -54,8 +54,7 @@ class Create_Conditional_Fields {
 		}
 		
 		if (is_plugin_active('hello-plus/hello-plus.php')) {
-			// wp_register_script( 'cfef_logic_hello', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend_hello.min.js', array( 'jquery' ), CFEF_VERSION, true );
-			wp_register_script( 'cfef_logic_hello', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend_hello.js', array( 'jquery' ), CFEF_VERSION, true );
+			wp_register_script( 'cfef_logic_hello', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend_hello.min.js', array( 'jquery' ), CFEF_VERSION, true );
 			wp_localize_script(
 				'cfef_logic_hello',
 				'my_script_vars',
@@ -85,6 +84,9 @@ class Create_Conditional_Fields {
 		wp_register_script( 'cfef_logic_editor', CFEF_PLUGIN_URL . 'assets/js/cfef_editor.min.js', array( 'jquery' ), CFEF_VERSION, true );
 		wp_enqueue_style( 'cfef_logic_editor', CFEF_PLUGIN_URL . 'assets/css/cfef_editor.min.css', null, CFEF_VERSION );
 		wp_enqueue_script( 'cfef_logic_editor' );
+		if ( is_plugin_active( 'hello-plus/hello-plus.php' ) ) {
+			wp_enqueue_style( 'cfef-font-awesome', ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/all.min.css', array(), CFEF_VERSION, 'all' );
+		}
 	}
 
 	/**

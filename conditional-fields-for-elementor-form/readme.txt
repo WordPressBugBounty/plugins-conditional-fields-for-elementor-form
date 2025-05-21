@@ -2,13 +2,13 @@
 Contributors: coolplugins,narinder-singh,satindersingh
 Tags: conditional-logic, dynamic-visibility, elementor-form, form-builder, elementor
 Requires at least: 5.0
-Tested up to: 6.8
+Tested up to: 6.8.1
 Requires PHP: 7.2
-Stable tag: 1.3.16
+Stable tag: 1.3.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Elementor tested up to: 3.28.4
-Elementor Pro tested up to: 3.28.4
+Elementor tested up to: 3.29.0
+Elementor Pro tested up to: 3.29.0
 
 Add conditions to Elementor form fields to hide or show a form field based on inputs from other fields, using if-else conditional logic.
 
@@ -22,7 +22,7 @@ Add conditions to Elementor form fields to hide or show a form field based on in
 [**CHECK PLUGIN DEMO**](https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=readme&utm_campaign=get-pro&utm_content=view-demos#demos)
 — —————————————- —
 
-https://youtu.be/j9-KlEaYgls
+https://youtu.be/0Fbueg7DSts
 
 **Elementor Pro does not support conditional logic inside its form widget fields, so we created Conditional Field addon. It provides you with the option to enable conditions on Elementor form fields, allowing you to hide or show a form field based on the inputs from other fields.**
 
@@ -193,6 +193,11 @@ Save or update the page and see the results and actions!
 == Upgrade Notice == 
  
 == Changelog ==
+
+### Version 1.3.17 | May 21, 2025
+- **Fixed:** All fields visible on load.
+- **Tested upto:** Elementor Version 3.29.0
+- **Tested upto:** Elementor Pro Version 3.29.0
 
 ### Version 1.3.16 | May 16, 2025
 - **Improved:** Minor code improvements.
