@@ -181,15 +181,36 @@
             if (displayMode== "show") {
                 if (conditionResult) {
                     field.removeClass("cfef-hidden");
+                    if (field.hasClass("cfef-step-field")) {
+                        var container = field.closest(".e-form__buttons");
+                        container.prev(".cfef-step-field-text").remove();
+                    }
                     if(field.hasClass('elementor-field-required')){
                     logicFixedRequiredShow(field,file_types);
                     }
                 } else {
-                    field.addClass("cfef-hidden");
-                    if(field.hasClass('elementor-field-required')){
-                        logicFixedRequiredHidden(field, logic_key,file_types, formId);
-                    } 
-                }
+                    if (field.hasClass("cfef-step-field")) {
+                        var container = field.closest(".e-form__buttons");
+                        // Get the inner text of the button (assuming the "Next" button has a data attribute for direction)
+                        var nextButtonText = container
+                          .find('button[id^="form-field-"]')
+                          .text()
+                          .trim();
+                    
+                        // If the message hasn't been added yet, insert it and replace "Next" with the actual button text
+                        if (container.prev(".cfef-step-field-text").length === 0) {
+                            var message = my_script_vars.no_input_step.replace('%s', nextButtonText);
+                            container.before('<p class="cfef-step-field-text">' + message + '</p>');
+                        }
+                      }else{
+                        if (field && field.length > 0) {    
+                            field.addClass("cfef-hidden");
+                            if(field.hasClass('elementor-field-required')){
+                                logicFixedRequiredHidden(field, logic_key,file_types, formId);
+                            } 
+                        }
+                    }
+            }
             } else {
                 if (conditionResult) {
                     if (field.hasClass("cfef-step-field")) {
@@ -203,11 +224,8 @@
                     
                         // If the message hasn't been added yet, insert it and replace "Next" with the actual button text
                         if (container.prev(".cfef-step-field-text").length === 0) {
-                          container.before(
-                            '<p class="cfef-step-field-text">No input is required on this step. Just click "' +
-                              nextButtonText +
-                              '" to proceed.</p>'
-                          );
+                            var message = my_script_vars.no_input_step.replace('%s', nextButtonText);
+                            container.before('<p class="cfef-step-field-text">' + message + '</p>');
                         }
                       } else {
                         // Check if field exists before adding the class
@@ -303,9 +321,8 @@
             // Add the default value when form Field is hidden
         function logicFixedRequiredHidden(formField, fieldKey, file_types, formId) {
             if (formField.hasClass("elementor-field-type-radio")) {
-                var groupclass = '.elementor-field-group-' + fieldKey;
-                const field2 = $(groupclass, $(`[data-form-id="form-${formId}"]`));
-
+                var groupclass = ".elementor-field-group-" + fieldKey;
+          const field2 = $(groupclass, $(`[data-form-id="form-${formId}"]`));
                 if (field2.length > 0) {
                     if (field2.find('input[value="^newOptionTest"]').length === 0) {
                         const newOption = $(`
@@ -472,6 +489,7 @@
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
                 var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
+                form.attr("data-form-id", "form-" + formId);
                 addHiddenClass(form, formId);
                 logicLoad(form, formId);
             });
@@ -481,6 +499,7 @@
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
                 var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
+                form.attr("data-form-id", "form-" + formId);
                 addHiddenClass(form, formId);
                 logicLoad(form, formId);
             });
@@ -491,6 +510,7 @@
             $(".elementor-form").each(function() {
                 var form = $(this).closest(".elementor-widget-form");
                 var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
+                form.attr("data-form-id", "form-" + formId);
                 addHiddenClass(form, formId);
                 logicLoad(form, formId);
             });
@@ -501,6 +521,7 @@
             setTimeout(()=>{
                     var form = jQuery(e.target).closest(".elementor-widget-form");
                     var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
+                    form.attr("data-form-id", "form-" + formId);
                     logicLoad(form, formId);
             },200)
         });
@@ -510,6 +531,7 @@
         $("body").on("input change", ".elementor-form input, .elementor-form select, .elementor-form textarea", function(e) {
             var form = $(this).closest(".elementor-widget-form");
             var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
+            form.attr("data-form-id", "form-" + formId);
             logicLoad(form, formId);
         });
 

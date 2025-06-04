@@ -4,7 +4,7 @@ Tags: conditional-logic, dynamic-visibility, elementor-form, form-builder, eleme
 Requires at least: 5.0
 Tested up to: 6.8.1
 Requires PHP: 7.2
-Stable tag: 1.3.17
+Stable tag: 1.3.18
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Elementor tested up to: 3.29.0
@@ -193,6 +193,10 @@ Save or update the page and see the results and actions!
 == Upgrade Notice == 
  
 == Changelog ==
+
+### Version 1.3.18 | June 04, 2025
+- **Fixed:** All fields visible on load.
+- **Fixed:** Submission error when a required field was hidden.
 
 ### Version 1.3.17 | May 21, 2025
 - **Fixed:** All fields visible on load.

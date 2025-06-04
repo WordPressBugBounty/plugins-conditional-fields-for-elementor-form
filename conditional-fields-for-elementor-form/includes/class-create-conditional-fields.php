@@ -49,9 +49,27 @@ class Create_Conditional_Fields {
 	public function add_assets_files() {
 		// Register scripts based on active plugins
 		if (is_plugin_active('elementor-pro/elementor-pro.php') || is_plugin_active('pro-elements/pro-elements.php')) {
-			wp_register_script( 'cfef_logic', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend.min.js', array( 'jquery' ), CFEF_VERSION, true );
-			wp_enqueue_script( 'cfef_logic' );
+			wp_register_script(
+				'cfef_logic',
+				CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend.min.js',
+				array('jquery'),
+				CFEF_VERSION,
+				true
+			);
+	
+			wp_localize_script(
+				'cfef_logic',
+				'my_script_vars', 
+				array(
+					'no_input_step' => __('No input is required on this step. Just click "%s" to proceed.', 'cfef'),
+					'next_button'   => __('Next', 'cfef'), 
+				)
+			);
+	
+			wp_enqueue_script('cfef_logic');
 		}
+	
+	
 		
 		if (is_plugin_active('hello-plus/hello-plus.php')) {
 			wp_register_script( 'cfef_logic_hello', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend_hello.min.js', array( 'jquery' ), CFEF_VERSION, true );
@@ -59,6 +77,9 @@ class Create_Conditional_Fields {
 				'cfef_logic_hello',
 				'my_script_vars',
 				array(
+					'no_input_required'    => __('No input is required on this step. Just click "', 'cfef'),
+					'to_proceed'           => __('" to proceed.', 'cfef'),
+					'next_button_default'  => __('Next', 'cfef'), 
 					'pluginConstant' => CFEF_PLUGIN_DIR,
 				)
 			);
@@ -400,7 +421,8 @@ class Create_Conditional_Fields {
 			}
 		}
 	
-		$condition = count( $logic_object ) > 0 ? wp_json_encode( $logic_object ) : '';
+		$condition = count($logic_object) > 0 ? wp_json_encode($logic_object) : '';
+
 		
 		if ( ! empty( $condition ) ) {
 			if ( is_object( $widget ) && method_exists( $widget, 'get_id' ) ) {
@@ -408,7 +430,7 @@ class Create_Conditional_Fields {
 			}
 			$template_id = 'cfef_logic_data_' . $form_id;			
 			
-			echo '<template id="' . esc_attr( $template_id ) . '" class="cfef_logic_data_js" data-form-id="' . esc_attr( $form_id ) . '">' . wp_kses_post( $condition ) . '</template>';
+			echo '<template id="' . esc_attr( $template_id ) . '" class="cfef_logic_data_js" data-form-id="' . esc_attr( $form_id ) . '">' .  esc_html($condition) . '</template>';
 		}
 
 	}
