@@ -4,11 +4,11 @@ Tags: conditional-logic, dynamic-visibility, elementor-form, form-builder, eleme
 Requires at least: 5.0
 Tested up to: 6.8.1
 Requires PHP: 7.2
-Stable tag: 1.3.18
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Elementor tested up to: 3.29.0
-Elementor Pro tested up to: 3.29.0
+Elementor tested up to: 3.30.3
+Elementor Pro tested up to: 3.30.0
 
 Add conditions to Elementor form fields to hide or show a form field based on inputs from other fields, using if-else conditional logic.
 
@@ -86,6 +86,10 @@ Add advanced fields and features to Elementor form widget, like **conditional fi
 
 **[Loco Translate Addon](https://locoaddon.com/?utm_source=cfef_plugin&utm_medium=readme&utm_campaign=homepage)**
 *Automatically translate WordPress plugin and theme strings with a single click.*
+
+**[Loop Grid Extender for Elementor Pro](https://wordpress.org/plugins/loop-grid-extender-for-elementor-pro/)**
+
+Enhance Elementor Pro's Loop Grid widget by displaying ACF Repeater Fields inside loop templates.
 
 ### CHECK USERS FEEDBACK ABOUT THIS PLUGIN
 — —————————————- —
@@ -193,6 +197,10 @@ Save or update the page and see the results and actions!
 == Upgrade Notice == 
  
 == Changelog ==
+
+### Version 1.4.0 | July 23, 2025
+- **Updated:** Admin Dashboard enhancements.
+- **Tested upto:** Elementor Version 3.30.3 and Elementor Pro Version 3.30.0
 
 ### Version 1.3.18 | June 04, 2025
 - **Fixed:** All fields visible on load.

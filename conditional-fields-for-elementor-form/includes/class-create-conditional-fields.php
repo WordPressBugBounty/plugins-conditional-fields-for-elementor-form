@@ -131,7 +131,7 @@ class Create_Conditional_Fields {
 						'tabs_wrapper' => 'form_fields_tabs',
 						'name'         => 'form_fields_conditions_tab',
 						'condition'    => array(
-							'field_type' => array( 'text', 'email', 'textarea', 'number', 'select', 'radio', 'checkbox', is_plugin_active('hello-plus/hello-plus.php') ? 'ehp-tel' : 'tel', 'url', 'date', 'time', 'html', 'upload', 'recaptcha', 'recaptcha_v3', 'password', is_plugin_active('hello-plus/hello-plus.php') ? 'ehp-acceptance' : 'acceptance', 'step' ),
+							'field_type' => array( 'text', 'email', 'textarea', 'number', 'select', 'radio', 'tel','checkbox', is_plugin_active('hello-plus/hello-plus.php') ? 'ehp-tel' : '', 'url', 'date', 'time', 'html', 'upload', 'recaptcha', 'recaptcha_v3', 'password', 'acceptance',is_plugin_active('hello-plus/hello-plus.php') ? 'ehp-acceptance' : '', 'step' ),
 						),
 					),
 				'cfef_logic'                 => array(
