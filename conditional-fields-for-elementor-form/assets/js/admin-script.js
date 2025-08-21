@@ -156,7 +156,7 @@ function handleElementCardTooltip() {
 
 				let plugin_name = tooltip.textContent.replace('Activate Plugin', '');
 
-				tooltip.innerHTML = plugin_name; // Reset message
+				tooltip.textContent = plugin_name; // Reset message
 
 
 			} else {
@@ -168,19 +168,28 @@ function handleElementCardTooltip() {
 
 				// Append button
 				if (action === 'activate') {
-					tooltip.innerHTML += `<button class="cfkef-activate-plugin-btn" data-slug="${slug}" data-init="${init}">Activate Plugin</button>`;
+					const button = document.createElement('button');
+					button.className = 'cfkef-activate-plugin-btn';
+					button.dataset.slug = slug;
+					button.dataset.init = init;
+					button.textContent = 'Activate Plugin';
+					tooltip.appendChild(button);
 				} else if (action === 'install') {
-					let extraCss;
-					if(el.classList.contains('need-install') && el.dataset.slug === 'elementor-pro'){
-						extraCss = 'redirect-elementor-page'
+					let extraCss = '';
+					if (el.classList.contains('need-install') && el.dataset.slug === 'elementor-pro') {
+						extraCss = 'redirect-elementor-page';
 					}
-					let tooltip_text = tooltip.innerHTML;
 
-					tooltip_text = tooltip_text.replace('Install Plugin', '');
+					// Clear tooltip text safely
+					const tooltipText = tooltip.textContent.replace('Install Plugin', '');
+					tooltip.textContent = tooltipText;
 
-					tooltip.innerHTML = "";
-
-					tooltip.innerHTML = tooltip_text + `<button class="cfkef-install-plugin-btn ${extraCss}" data-slug="${slug}" data-init="${init}">Install Plugin</button>`;
+					const button = document.createElement('button');
+					button.className = `cfkef-install-plugin-btn ${extraCss}`;
+					button.dataset.slug = slug;
+					button.dataset.init = init;
+					button.textContent = 'Install Plugin';
+					tooltip.appendChild(button);
 				}
 			}
 		});

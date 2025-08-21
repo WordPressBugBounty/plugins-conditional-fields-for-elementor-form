@@ -191,11 +191,11 @@ class CFEF_Admin {
             asort($plugins_dates);
             $first_plugin = key($plugins_dates);
         } else {
-            $first_plugin = 'fim_plugin';
+            $first_plugin = 'cfef_plugin';
         }
 
 
-        $tab = isset($_GET['tab']) ? $_GET['tab'] : 'form-elements';
+        $tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'form-elements';
         ?>
         <div class="cfkef-wrapper">
             <div class="cfk-header">
@@ -205,20 +205,20 @@ class CFEF_Admin {
                     </a>
 
                     <span>Lite</span>
-                    <a class="button button-primary upgrade-pro-btn" target="_blank" href="https://coolplugins.net/cool-formkit-for-elementor-forms/?utm_source=<?php echo $first_plugin?>&utm_medium=inside&utm_campaign=get-pro&utm_content=plugins-dashboard#pricing">
+                    <a class="button button-primary upgrade-pro-btn" target="_blank" href="https://coolformkit.com/pricing/?utm_source=<?php echo $first_plugin?>&utm_medium=inside&utm_campaign=get_pro&utm_content=dashboard">
                         <img class="crown-diamond-pro" src="<?php echo esc_url(CFEF_PLUGIN_URL . 'assets/images/crown-diamond-pro.png'); ?>" alt="Cool FormKit Logo">
                         <?php esc_html_e('Upgrade To Pro', 'cool-formkit'); ?>
                     </a>
                 </div>
                 <div class="cfk-buttons">
                     <p>Advanced Elementor Form Builder.</p>
-                    <a href="https://coolplugins.net/cool-formkit-for-elementor-forms/?utm_source=<?php echo $first_plugin; ?>&utm_medium=inside&utm_campaign=get-pro&utm_content=plugins-dashboard#pricing" class="button" target="_blank">Get Cool FormKit</a>
+                    <a href="https://coolformkit.com/pricing/?utm_source=<?php echo $first_plugin; ?>&utm_medium=inside&utm_campaign=get_pro&utm_content=setting_page_header" class="button" target="_blank">Get Cool FormKit</a>
                 </div>
             </div>
             <h2 class="nav-tab-wrapper">
-                <a href="?page=cool-formkit&tab=form-elements" class="nav-tab <?php echo $tab == 'form-elements' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Form Elements', 'cool-formkit'); ?></a>
-                <a href="?page=cool-formkit&tab=settings" class="nav-tab <?php echo $tab == 'settings' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Settings', 'cool-formkit'); ?></a>
-                <a href="?page=cool-formkit&tab=license" class="nav-tab <?php echo $tab == 'license' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('License', 'cool-formkit'); ?></a>
+                <a href="?page=cool-formkit&tab=form-elements" class="nav-tab <?php echo esc_attr($tab) == 'form-elements' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Form Elements', 'cool-formkit'); ?></a>
+                <a href="?page=cool-formkit&tab=settings" class="nav-tab <?php echo esc_attr($tab) == 'settings' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Settings', 'cool-formkit'); ?></a>
+                <a href="?page=cool-formkit&tab=license" class="nav-tab <?php echo esc_attr($tab) == 'license' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('License', 'cool-formkit'); ?></a>
             </h2>
             <div class="tab-content">
                 <?php
@@ -320,7 +320,7 @@ class CFEF_Admin {
 
         wp_enqueue_style('cfkef-admin-global-style', CFEF_PLUGIN_URL . 'assets/css/global-admin-style.css', array(), $this->version, 'all');
 
-        if (isset($_GET['page']) &&(strpos($_GET['page'], 'cool-formkit') !== false || strpos($_GET['page'], 'cfkef-entries') !== false)){
+        if (isset($_GET['page']) &&(strpos(sanitize_text_field($_GET['page']), 'cool-formkit') !== false || strpos(sanitize_text_field($_GET['page']), 'cfkef-entries') !== false)){
             wp_enqueue_style('cfkef-admin-style', CFEF_PLUGIN_URL . 'assets/css/admin-style.css', array(), $this->version, 'all');
 
             wp_enqueue_style('cfkef-temp-style', CFEF_PLUGIN_URL . 'assets/css/dashboard-style.css', array(), '1.0', 'all');

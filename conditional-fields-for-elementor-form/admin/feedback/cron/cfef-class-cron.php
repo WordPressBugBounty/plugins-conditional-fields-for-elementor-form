@@ -124,17 +124,17 @@ if (!class_exists('cfef_cronjob')) {
                   $admin_email = sanitize_email(get_option('admin_email') ?: 'N/A');
               
                   $post_data = array(
-                      'site_id'           => md5($site_id),
-                      'plugin_version'    => $plugin_version,
+                      'site_id'           => sanitize_text_field(md5($site_id)),
+                      'plugin_version'    => sanitize_text_field($plugin_version),
                       'plugin_name'       => "Conditional Fields for Elementor Form",
-                      'plugin_initial'    => $initial_version,
-                      'email'             => $admin_email,
+                      'plugin_initial'    => sanitize_text_field($initial_version),
+                      'email'             => sanitize_email($admin_email),
                       'site_url'          => esc_url_raw($site_url),
                       'server_info'       => $server_info,
                       'extra_details'     => $extra_details,
                   );
               
-                  $response = wp_remote_post($feedback_url, array(
+                  $response = wp_remote_post(esc_url($feedback_url), array(
                       'method'    => 'POST',
                       'timeout'   => 30,
                       'headers'   => array(

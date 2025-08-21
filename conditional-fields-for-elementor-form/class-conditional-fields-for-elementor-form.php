@@ -3,13 +3,13 @@
  * Plugin Name: Conditional Fields for Elementor Form
  * Plugin URI:https://coolplugins.net/
  * Description: The Conditional Fields for Elementor plugin add-on used to show and hide form fields based on conditional input values.
- * Version: 1.4.1
+ * Version: 1.4.2
  * Author:  Cool Plugins
- * Author URI: https://coolplugins.net/
+ * Author URI: https://coolplugins.net/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
  * License:GPL2
  * Text Domain:cfef
- * Elementor tested up to: 3.30.3
- * Elementor Pro tested up to: 3.30.0
+ * Elementor tested up to:  3.31.2
+ * Elementor Pro tested up to:  3.31.2
  *
  * @package cfef
  */
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 if ( ! defined( 'CFEF_VERSION' ) ) {
-	define( 'CFEF_VERSION', '1.4.1' );
+	define( 'CFEF_VERSION', '1.4.2' );
 }
 /*** Defined constent for later use */
 define( 'CFEF_FILE', __FILE__ );
@@ -113,7 +113,7 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 		}
 
 		public function Cfef_pro_plugin_demo_link($links){
-			$get_pro_link = '<a href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get-pro&utm_content=plugins-list#pricing" style="font-weight: bold; color: green;" target="_blank">Get Pro</a>';
+			$get_pro_link = '<a href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=plugins_list#pricing" style="font-weight: bold; color: green;" target="_blank">Get Pro</a>';
 			array_unshift( $links, $get_pro_link );
 			return $links;
 		}
@@ -129,7 +129,11 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 				return false;
 			}
 			if ( $plugin == plugin_basename( __FILE__ ) ) {
-				exit( wp_redirect( admin_url( 'admin.php?page=cool-formkit' ) ) );
+
+				if ( current_user_can( 'activate_plugins' ) ) {
+					wp_redirect( admin_url( 'admin.php?page=cool-formkit' ) );
+					exit;
+				}
 			}	
 		}
 
@@ -248,7 +252,7 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 			
 			if ( CFEF_PLUGIN_BASE === $plugin_file ) {
 				$row_meta = [
-					'docs' => '<a href="https://docs.coolplugins.net/doc/apply-conditional-logic-on-elementor-form-fields/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=docs&utm_content=plugins-list" aria-label="' . esc_attr( esc_html__( 'Country Code Documentation', '' ) ) . '" target="_blank">' . esc_html__( 'Docs & FAQs', 'cfef' ) . '</a>'
+					'docs' => '<a href="https://docs.coolplugins.net/plugin/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=docs&utm_content=plugins_list" aria-label="' . esc_attr( esc_html__( 'Country Code Documentation', '' ) ) . '" target="_blank">' . esc_html__( 'Docs & FAQs', 'cfef' ) . '</a>'
 				];
 
 				$plugin_meta = array_merge( $plugin_meta, $row_meta );

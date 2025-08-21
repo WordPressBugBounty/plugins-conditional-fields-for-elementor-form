@@ -18,6 +18,20 @@
   flex-wrap: wrap;
 }
 
+
+
+.pro-plugin-buy p{
+  margin: 8px 0px !important;
+}
+
+.no-pro-buy-btn{
+  margin-left: 10px !important;
+}
+
+.pro-plugin-buy-buttons-con{
+  margin-bottom: 8px;
+}
+
 .cfkef-support-buttons {
   gap: 10px;
   display: flex;

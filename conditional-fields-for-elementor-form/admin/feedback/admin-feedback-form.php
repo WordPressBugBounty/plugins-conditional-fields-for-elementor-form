@@ -15,7 +15,7 @@ class cfef_feedback {
 		private $review_option = 'cfef_elementor_notice_dismiss';
 		private $buy_link = 'https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get-pro&utm_content=get-pro#pricing';
 		private $review_link = 'https://wordpress.org/support/plugin/conditional-fields-for-elementor-form/reviews/#new-post';
-		private $plugin_logo = 'assets/images/conditional-fields.png';
+		private $plugin_logo = 'assets/images/conditional-fields.gif';
 
 	/*
 	|-----------------------------------------------------------------|
@@ -341,7 +341,7 @@ class cfef_feedback {
 
 
 	function submit_deactivation_response() {
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['_wpnonce'] ), '_cool-plugins_deactivate_feedback_nonce' ) ) {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['_wpnonce'] ), '_cool-plugins_deactivate_feedback_nonce' ) || ! current_user_can( 'manage_options' )) {
 			wp_send_json_error();
 		} else {
 			$reason             = isset( $_POST['reason'] ) ? sanitize_text_field( $_POST['reason'] ) : '';
@@ -381,20 +381,20 @@ class cfef_feedback {
 			$unique_key     	= '12';
 			$site_id        	= $site_url . '-' . $install_date . '-' . $unique_key;
 			$response          = wp_remote_post(
-				$feedback_url,
+				esc_url($feedback_url),
 				array(
                     'timeout' => 30,
                         'body'    => array(
                         'server_info' => serialize($this->cfef_get_user_info()['server_info']),
                         'extra_details' => serialize($this->cfef_get_user_info()['extra_details']),
                         'plugin_initial'  => isset($plugin_initial) ? sanitize_text_field($plugin_initial) : 'N/A',
-                        'plugin_version' => $this->plugin_version,
-                        'plugin_name'    => $this->plugin_name,
-                        'reason'         => $deativation_reason,
-                        'review'         => $sanitized_message,
-                        'email'          => $admin_email,
-                        'domain'         => $site_url,
-						'site_id'    	 => md5($site_id),
+                        'plugin_version' => sanitize_text_field($this->plugin_version),
+                        'plugin_name'    => sanitize_text_field($this->plugin_name),
+                        'reason'         => sanitize_text_field($deativation_reason),
+                        'review'         => sanitize_textarea_field($sanitized_message),
+                        'email'          => sanitize_email($admin_email),
+                        'domain'         => esc_url($site_url),
+						'site_id'    	 => sanitize_text_field(md5($site_id)),
                     ),
                 )
 			);
