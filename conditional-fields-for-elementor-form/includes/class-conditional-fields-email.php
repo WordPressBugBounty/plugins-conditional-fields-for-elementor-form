@@ -99,7 +99,7 @@ class Conditional_Email_Action extends Conditional_Email_Action_Base {
                 'label' => esc_html__('', "cfef"),
                 'type' => Controls_Manager::RAW_HTML,
                 'content_classes' => 'cfef_pro_link_button',
-                'raw' => '<a target="_blank" href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get-pro&utm_content=email-condition">Available In Conditional Fields Pro</a>',
+                'raw' => '<a target="_blank" href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=panel_email_condition">Available In Conditional Fields Pro</a>',
                 'condition' => [
                     $cfef_conditional_logic_id => 'yes'
                 ],

@@ -277,7 +277,7 @@ $country_field_features = array(
 $form_mask_features = array(
     'form_input_mask' => array(
         'label' => __('Field Masking', 'cool-formkit'),
-        'how_to' => str_replace('utm_source=', 'utm_source=' . $first_plugin, 'https://docs.coolplugins.net/doc/input-masks-elementor-form/?utm_source=cfkef_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard'),
+        'how_to' => str_replace('utm_source=cfkef_plugin', 'utm_source=' . $first_plugin, 'https://docs.coolplugins.net/doc/input-masks-elementor-form/?utm_source=cfkef_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard'),
         'demo' => str_replace('utm_source=cfkef_plugin', 'utm_source=' . $first_plugin, 'https://docs.coolplugins.net/doc/input-masks-elementor-form/?utm_source=cfkef_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard'),
         'icon' => CFEF_PLUGIN_URL . 'assets/icons/input-mask-min.svg'
     ),
@@ -605,7 +605,7 @@ $input_form_mask_features = array(
                                 } else {
 
                                     echo '<a target="_blank" href="' . esc_url(
-                                        'https://coolformkit.com/pricing?utm_source=' . urlencode($first_plugin) . '&utm_medium=inside&utm_campaign=get-pro&utm_content=dashboard'
+                                        'https://coolformkit.com/pricing?utm_source=' . urlencode($first_plugin) . '&utm_medium=inside&utm_campaign=get_pro&utm_content=dashboard'
                                     ) . '" class="button">' . esc_html__('Get Pro', 'cfef') . '</a>';
                                 }
                                 ?>
@@ -777,7 +777,7 @@ $input_form_mask_features = array(
                                 <div class="cfkef-save-controls">
 
                                         <a target="_blank" href="
-                                            https://coolformkit.com/pricing?utm_source=<?php echo $first_plugin?>&utm_medium=inside&utm_campaign=get-pro&utm_content=dashboard" class="button">Get Pro</a>
+                                            https://coolformkit.com/pricing?utm_source=<?php echo $first_plugin?>&utm_medium=inside&utm_campaign=get_pro&utm_content=dashboard" class="button">Get Pro</a>
                                     
                                 </div>
                             </div>
@@ -921,7 +921,7 @@ $input_form_mask_features = array(
                                     } else {
 
                                         echo '<a target="_blank" href="' . esc_url(
-                                            'https://coolformkit.com/pricing?utm_source=' . urlencode($first_plugin) . '&utm_medium=inside&utm_campaign=get-pro&utm_content=dashboard'
+                                            'https://coolformkit.com/pricing?utm_source=' . urlencode($first_plugin) . '&utm_medium=inside&utm_campaign=get_pro&utm_content=dashboard'
                                         ) . '" class="button">' . esc_html__('Get Pro', 'cfef') . '</a>';
                                     }
                                     ?>

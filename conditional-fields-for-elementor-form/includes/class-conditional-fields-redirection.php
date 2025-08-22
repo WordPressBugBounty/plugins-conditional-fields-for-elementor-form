@@ -111,7 +111,7 @@ class Conditional_Fields_Redirection extends Conditional_Fields_Redirection_Base
                 'label' => esc_html__('', "cfef"),
                 'type' => \Elementor\Controls_Manager::RAW_HTML,
                 'content_classes' => 'cfef_pro_link_button',
-                'raw' => '<a target="_blank" href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get-pro&utm_content=redirect-condition">Available In Conditional Fields Pro</a>',
+                'raw' => '<a target="_blank" href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=panel_redirect_condition">Available In Conditional Fields Pro</a>',
                 'condition' => [
                     $cfef_conditional_logic_id => 'yes'
                 ],

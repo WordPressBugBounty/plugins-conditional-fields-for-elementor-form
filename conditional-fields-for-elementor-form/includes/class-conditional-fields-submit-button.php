@@ -36,7 +36,7 @@ class Conditional_Submit_Button{
 				'label' => esc_html__( '', "cfef" ),
                 'type' => Controls_Manager::RAW_HTML,
                 'content_classes' => 'cfef_pro_link_button',
-				'raw'          => '<a class="cfef_custom_html" target="_blank" href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get-pro&utm_content=button-condition">Available In Conditional Fields Pro</a>',
+				'raw'          => '<a class="cfef_custom_html" target="_blank" href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=panel_button_condition">Available In Conditional Fields Pro</a>',
                 'condition' => array(
                     $cfef_conditional_logic_id_for_submit => 'yes'
                 ),

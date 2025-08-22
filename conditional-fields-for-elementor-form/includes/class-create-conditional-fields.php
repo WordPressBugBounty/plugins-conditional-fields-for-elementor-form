@@ -278,7 +278,7 @@ class Create_Conditional_Fields {
 			$field_controls['cfef_pro_link_buttons'] = array(
 				'name'            => 'cfef_pro_link_buttons',
 				'type'            => Controls_Manager::RAW_HTML,
-				'raw'             => "<a href='https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get-pro&utm_content=above-notice' target='_blank' >Get Conditional Fields Pro</a>",
+				'raw'             => "<a href='https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=panel_form_fields' target='_blank' >Get Conditional Fields Pro</a>",
 				'content_classes' => 'cfef_pro_link_button',
 				'tab'             => 'content',
 				'condition'       => array(
