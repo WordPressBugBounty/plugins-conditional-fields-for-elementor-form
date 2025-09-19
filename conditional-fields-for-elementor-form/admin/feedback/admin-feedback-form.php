@@ -10,7 +10,6 @@ class cfef_feedback {
 		private $plugin_version = CFEF_VERSION;
 		private $plugin_name    = 'conditional-fields-for-elementor-form';
 		private $plugin_slug    = 'cfef';
-		// private $feedback_url   = 'http://feedback.coolplugins.net/wp-json/coolplugins-feedback/v1/feedback';
 		private $installation_date_option = 'cfef-installDate';
 		private $review_option = 'cfef_elementor_notice_dismiss';
 		private $buy_link = 'https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get-pro&utm_content=get-pro#pricing';
