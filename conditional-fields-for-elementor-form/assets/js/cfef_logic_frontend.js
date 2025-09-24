@@ -368,8 +368,11 @@
             } else if (formField.hasClass("elementor-field-type-tel")) {
                 let value = formField.find("input").val() 
                 if(value === ""){
-                    formField.find("input").removeAttr("pattern");
-                    formField.find("input").val("+1234567890");
+                    let country_enable = formField.find(".ccfef-editor-intl-input");
+                    if(country_enable.length == 0){
+                        formField.find("input").removeAttr("pattern");
+                        formField.find("input").val("+1234567890");
+                    }
                 }
             } else if (formField.hasClass("elementor-field-type-url")) {
                 let value = formField.find("input").val()

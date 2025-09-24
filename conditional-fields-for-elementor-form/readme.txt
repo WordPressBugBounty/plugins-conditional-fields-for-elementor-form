@@ -5,7 +5,7 @@ Tags: conditional logic, conditional fields, elementor form, elementor, elemento
 Requires at least: 5.0
 Tested up to: 6.8.2
 Requires PHP: 7.2
-Stable tag: 1.4.5
+Stable tag: 1.4.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Elementor tested up to: 3.32.2
@@ -231,10 +231,13 @@ Save or update the page and preview the form to see the conditions in action.
 
 == Changelog ==
 
+= 1.4.6 | Sep 24, 2025 =
+* Fixed: Issue with the required country code field.
+
 = 1.4.5 | Sep 19, 2025 =
-- Added: - Added other plugin recommendations for Pro Elements users.
-- Fixed: - Conflicts with other plugins.
-- Tested up to: Elementor 3.32.2 and Elementor Pro 3.32.1.
+* Added: Added other plugin recommendations for Pro Elements users.
+* Fixed: Conflicts with other plugins.
+* Tested up to: Elementor 3.32.2 and Elementor Pro 3.32.1.
 
 = 1.4.4 | Sep 10, 2025 =
 * Added: Added other plugin recommendations for Elementor users.

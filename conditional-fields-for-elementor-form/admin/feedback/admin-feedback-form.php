@@ -12,7 +12,7 @@ class cfef_feedback {
 		private $plugin_slug    = 'cfef';
 		private $installation_date_option = 'cfef-installDate';
 		private $review_option = 'cfef_elementor_notice_dismiss';
-		private $buy_link = 'https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get-pro&utm_content=get-pro#pricing';
+		private $buy_link = 'https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=inside_notice#pricing';
 		private $review_link = 'https://wordpress.org/support/plugin/conditional-fields-for-elementor-form/reviews/#new-post';
 		private $plugin_logo = 'assets/images/conditional-fields.gif';
 
@@ -41,6 +41,14 @@ class cfef_feedback {
 			wp_enqueue_script( __NAMESPACE__ . 'feedback-script', $this->plugin_url . 'admin/feedback/js/admin-feedback.js', array( 'jquery' ), $this->plugin_version );
 			wp_enqueue_style( 'cool-plugins-feedback-css', $this->plugin_url . 'admin/feedback/css/admin-feedback.css', null, $this->plugin_version );
 		}
+
+			wp_enqueue_style( 'cfef-admin-review-notice-css', $this->plugin_url . 'admin/feedback/css/cfef-admin-review-notice.css', null, $this->plugin_version );
+
+			wp_enqueue_script( 'cfef-admin-review-notice-js', $this->plugin_url . 'admin/feedback/js/cfef-admin-review-notice.js', array( 'jquery' ), $this->plugin_version );
+
+
+
+
 	}
 
 	public function cfef_dismiss_review_notice(){
@@ -78,16 +86,16 @@ class cfef_feedback {
 	}
 
 	function cfef_create_notice_content() {
+
+
 		$plugin_buy_button = '';
 		if ( $this->buy_link != '' ) {
 			$plugin_buy_button = '<li><a href="' . $this->buy_link . '" target="_blank" class="buy-pro-btn button button-secondary" title="Buy Pro">Buy Pro</a></li>';
 		}
 
 		$html = '
-		<div data-ajax-url="' . admin_url( 'admin-ajax.php' ) . '" data-ajax-callback="' . $this->plugin_slug . '_dismiss_notice" class="' . $this->plugin_slug . '-review-notice-wrapper notice">
-			<div class="logo_container">
-				<a href="' . esc_url( $this->review_link ) . '" target="_blank"><img src="' . $this->plugin_url . $this->plugin_logo . '" alt="' . $this->plugin_name . '"></a>
-			</div>
+		<div data-ajax-url="' . admin_url( 'admin-ajax.php' ) . '" data-ajax-callback="' . $this->plugin_slug . '_dismiss_notice" class="' . $this->plugin_slug . '-review-notice-wrapper notice notice-info is-dismissible">
+			
 			<div class="message_container">
 				<p>Thanks for using <b>Conditional Fields for Elementor Form</b> WordPress plugin. We hope it meets your expectations!<br/>Please give us a quick rating, it works as a boost for us to keep working on more <a href="https://coolplugins.net" target="_blank"><strong>Cool Plugins</strong></a>!</p>
 				<ul>
@@ -99,109 +107,6 @@ class cfef_feedback {
 			</div>
 		</div>
 		';
-
-		// css styles
-		$style = '
-		<style>
-		#wpbody .' . $this->plugin_slug . '-review-notice-wrapper.notice {
-			padding: 5px;
-			margin: 5px 0;
-			display: table;
-			max-width: 820px;
-			border-radius: 5px;
-			border: 1px solid #ced3d6;
-			box-sizing: border-box;
-			box-shadow: 2px 4px 8px -2px rgba(0, 0, 0, 0.1)
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper .logo_container {
-			width: 80px;
-			display: table-cell;
-			padding: 5px;
-			vertical-align: middle;
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper .logo_container a,
-		.' . $this->plugin_slug . '-review-notice-wrapper .logo_container img {
-			width:80px;
-			height:auto;
-			display:inline-block;
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper .message_container {
-			display: table-cell;
-			padding: 5px;
-			vertical-align: middle;
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper p,
-		.' . $this->plugin_slug . '-review-notice-wrapper ul {
-			padding: 0;
-			margin: 0;
-			line-height: 1.25em;
-			display: flow-root;
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper ul {
-			margin-top: 10px;
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper ul li {
-			float: left;
-			margin: 0px 10px 0 0;
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper ul li .button-primary {
-			background:#92013c;
-			text-shadow: none;
-			border-color: #a69516;
-			box-shadow: none;
-			color: #fff;
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper ul li .button-secondary {
-			background: #fff;
-			background-color: #fff;
-			border: 1px solid #757575;
-			color: #757575;
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper ul li .button-secondary.already-rated-btn:after {
-			color: #f12945;
-			content: "\f153";
-			display: inline-block;
-			vertical-align: middle;
-			margin: -1px 0 0 5px;
-			font-size: 14px;
-			line-height: 14px;
-			font-family: dashicons;
-		}
-		.' . $this->plugin_slug . '-review-notice-wrapper ul li .button-primary:hover {
-			background: #222;
-			border-color: #000;
-		}
-		@media screen and (max-width: 660px) {
-			.' . $this->plugin_slug . '-review-notice-wrapper .logo_container{
-				display:none;
-			}
-			.' . $this->plugin_slug . '-review-notice-wrapper .message_container {
-				display: flow-root;
-			}
-		}
-		</style>
-		';
-
-		// close notice script
-		$script = '
-		<script>
-		jQuery(document).ready(function ($) {
-			$(".' . $this->plugin_slug . '_dismiss_notice").on("click", function (event) {
-				var $this = $(this);
-				var wrapper=$this.parents(".' . $this->plugin_slug . '-review-notice-wrapper");
-				var ajaxURL=wrapper.data("ajax-url");
-				var ajaxCallback=wrapper.data("ajax-callback");         
-				$.post(ajaxURL, { "action":ajaxCallback }, function( data ) {
-					wrapper.slideUp("fast");
-				}, "json");
-			});
-		});
-		</script>
-		';
-
-		$html .= '
-		' . $style . '
-		' . $script;
 
 		return $html;
 	}
