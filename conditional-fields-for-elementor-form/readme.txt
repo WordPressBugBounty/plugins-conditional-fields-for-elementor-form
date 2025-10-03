@@ -5,7 +5,7 @@ Tags: conditional logic, conditional fields, elementor form, elementor, elemento
 Requires at least: 5.0
 Tested up to: 6.8.2
 Requires PHP: 7.2
-Stable tag: 1.4.6
+Stable tag: 1.4.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Elementor tested up to: 3.32.2
@@ -230,6 +230,9 @@ Save or update the page and preview the form to see the conditions in action.
 ---
 
 == Changelog ==
+
+= 1.4.7 | Oct 3, 2025 =
+* Fixed: Conditional navigation ensures hidden steps are skipped and users are routed correctly.
 
 = 1.4.6 | Sep 24, 2025 =
 * Fixed: Issue with the required country code field.

@@ -3,7 +3,7 @@
  * Plugin Name: Conditional Fields for Elementor Form
  * Plugin URI:https://coolplugins.net/
  * Description: The Conditional Fields for Elementor plugin add-on used to show and hide form fields based on conditional input values.
- * Version: 1.4.6
+ * Version: 1.4.7
  * Author:  Cool Plugins
  * Author URI: https://coolplugins.net/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
  * License:GPL2
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 if ( ! defined( 'CFEF_VERSION' ) ) {
-	define( 'CFEF_VERSION', '1.4.6' );
+	define( 'CFEF_VERSION', '1.4.7' );
 }
 /*** Defined constent for later use */
 define( 'CFEF_FILE', __FILE__ );
