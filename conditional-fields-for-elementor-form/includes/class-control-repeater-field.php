@@ -1,4 +1,8 @@
 <?php
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound	
+
+
 /**
  * Files use for creating repeater button for conditional fields
  *

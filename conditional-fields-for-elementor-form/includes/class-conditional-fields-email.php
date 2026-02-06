@@ -52,7 +52,7 @@ class Conditional_Email_Action extends Conditional_Email_Action_Base {
      * @return string
      */
     public function get_label() {
-        return esc_html__('Email Conditionally (Pro)', 'cfef');
+        return esc_html__('Email Conditionally (Pro)','conditional-fields-for-elementor-form');
     }
 
     /**
@@ -87,7 +87,7 @@ class Conditional_Email_Action extends Conditional_Email_Action_Base {
         $widget->add_control(
             $cfef_conditional_logic_id,
             [
-                'label' => esc_html__('Enable Conditions', 'cfef'),
+                'label' => esc_html__('Enable Conditions','conditional-fields-for-elementor-form'),
                 'render_type' => 'none',
                 'type' => Controls_Manager::SWITCHER,
             ]
@@ -96,7 +96,7 @@ class Conditional_Email_Action extends Conditional_Email_Action_Base {
         $widget->add_control(
             $this->controler_id('cfef_logic_mode'),
             [
-                'label' => esc_html__('', "cfef"),
+                'label' => '',
                 'type' => Controls_Manager::RAW_HTML,
                 'content_classes' => 'cfef_pro_link_button',
                 'raw' => '<a target="_blank" href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=panel_email_condition">Available In Conditional Fields Pro</a>',
@@ -161,7 +161,7 @@ class Conditional_Email_Action_Two extends Conditional_Email_Action {
      * @return string
      */
     public function get_label() {
-        return esc_html__('Email Conditionally 2 (Pro)', 'cfef');
+        return esc_html__('Email Conditionally 2 (Pro)','conditional-fields-for-elementor-form');
     }
     
     /**

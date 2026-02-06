@@ -1,3 +1,27 @@
-a[href="admin.php?page=elementor-forms-addons"] {
+/* a[href="admin.php?page=elementor-forms-addons"] {
     display: none !important;
+}
+
+div[data-notice_id="formdb-marketing-elementor-form-submissions"] {
+    display: none !important;
+} */
+
+div[data-notice_id="formdb-marketing-elementor-form-submissions"] .e-notice__aside{
+    display: none !important;
+} 
+
+#wpcontent #e-admin-top-bar-root ~ #wpbody div[data-notice_id="formdb-marketing-elementor-form-submissions"]{
+    display: block !important;
+}
+
+div[data-notice_id="formdb-marketing-elementor-form-submissions"] div.e-notice__content{
+    padding: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+
+div[data-notice_id="formdb-marketing-elementor-form-submissions"] div.e-notice__actions{
+    margin-block-start: 0px !important;
 }

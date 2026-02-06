@@ -51,7 +51,8 @@ class Conditional_Fields_Elementor_Page {
 
     private static function cfkef_current_page($slug)
     {
-        $current_page = isset($_REQUEST['page']) ? esc_html($_REQUEST['page']) : (isset($_REQUEST['post_type']) ? esc_html($_REQUEST['post_type']) : '');
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $current_page = isset( $_REQUEST['page'] ) ? sanitize_text_field(( wp_unslash( $_REQUEST['page'] )) ) : ( isset( $_REQUEST['post_type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) : '');
         $status=false;
 
         if (in_array($current_page, self::get_allowed_pages()) && $current_page === $slug) {

@@ -81,10 +81,10 @@ function buttonShakeEffectHandler() {
 
 		if (!headerButton || bodyInputs.length === 0) return;
 
-		const input1 = wrapper.querySelector('input[name="condtional_logic"]');
-		const input2 = wrapper.querySelector('input[name="country_code"]');
-		const input3 = wrapper.querySelector('input[name="form_input_mask"]');
-		const input4 = wrapper.querySelector('input[name="input_mask"]');
+		const input1 = wrapper.querySelector('input[value="conditional_logic"]');
+		const input2 = wrapper.querySelector('input[value="country_code"]');
+		const input3 = wrapper.querySelector('input[value="form_input_mask"]');
+		const input4 = wrapper.querySelector('input[value="input_mask"]');
 
 
 
@@ -94,45 +94,43 @@ function buttonShakeEffectHandler() {
 			headerButton.classList.add('shake-effect');
 		}
 
+		
 
 		bodyInputs.forEach(input => {
 
-
-
 			input.addEventListener('change', function () {
-				console.log(input.name);
 
 
-				if (input1 && input.name === 'condtional_logic') {
+				if (input1 && input.value === 'conditional_logic') {
 
 
 					if(input1.checked || !input1.checked){
 
-						jQuery('input[name="condtional_logic"]').parent().parent().parent().parent().parent().find(".button-primary").addClass('shake-effect');
+						jQuery('input[value="conditional_logic"]').parent().parent().parent().parent().parent().find(".button-primary").addClass('shake-effect');
 					}
 				}
 				
-				else if (input2 && input.name === 'country_code') {
+				else if (input2 && input.value === 'country_code') {
 
 					if(input2.checked || !input2.checked){
 
-						jQuery('input[name="country_code"]').parent().parent().parent().parent().parent().find(".button-primary").addClass('shake-effect');
+						jQuery('input[value="country_code"]').parent().parent().parent().parent().parent().find(".button-primary").addClass('shake-effect');
 					}
 				}
 
-				else if (input3 && input.name === 'form_input_mask') {
+				else if (input3 && input.value === 'form_input_mask') {
 
 					if(input3.checked || !input3.checked){
 
-						jQuery('input[name="form_input_mask"]').parent().parent().parent().parent().parent().find(".button-primary").addClass('shake-effect');
+						jQuery('input[value="form_input_mask"]').parent().parent().parent().parent().parent().find(".button-primary").addClass('shake-effect');
 					}
 				}
 
-				else if (input4 && input.name === 'input_mask') {
+				else if (input4 && input.value === 'input_mask') {
 
 					if(input4.checked || !input4.checked){
 
-						jQuery('input[name="input_mask"]').parent().parent().parent().parent().parent().find(".button-primary").addClass('shake-effect');
+						jQuery('input[value="input_mask"]').parent().parent().parent().parent().parent().find(".button-primary").addClass('shake-effect');
 					}
 				}
 
@@ -153,12 +151,9 @@ function handleElementCardTooltip() {
 			// Toggle visibility
 			if (tooltip.style.display === 'block') {
 				tooltip.style.display = 'none';
-
 				let plugin_name = tooltip.textContent.replace('Activate Plugin', '');
 
-				tooltip.textContent = plugin_name; // Reset message
-
-
+				tooltip.innerHTML = plugin_name; // Reset message
 			} else {
 				tooltip.style.display = 'block';
 
@@ -200,8 +195,6 @@ function handleElementCardTooltip() {
 		if (!e.target.closest('.cfkef-form-element-card')) {
 			document.querySelectorAll('.cfkef-tooltip').forEach(tip => {
 				tip.style.display = 'none';
-
-
 				tip_message  = tip.textContent.replace('Activate Plugin', '');
 				tip.innerHTML = tip_message;
 			});
@@ -243,7 +236,6 @@ function handleTooltipButtonAction(){
 								if (res) {
 									window.location.reload();
 								}
-								
 							},
 							error: function () {
 								alert('Activation failed.');

@@ -3,13 +3,13 @@
  * Plugin Name: Conditional Fields for Elementor Form
  * Plugin URI:https://coolplugins.net/
  * Description: The Conditional Fields for Elementor plugin add-on used to show and hide form fields based on conditional input values.
- * Version: 1.4.7
+ * Version: 1.6.1
  * Author:  Cool Plugins
  * Author URI: https://coolplugins.net/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
  * License:GPL2
- * Text Domain:cfef
- * Elementor tested up to:  3.32.2
- * Elementor Pro tested up to:  3.32.1
+ * Text Domain:conditional-fields-for-elementor-form
+ * Elementor tested up to:  3.35.0
+ * Elementor Pro tested up to:  3.35.0
  *
  * @package cfef
  */
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 if ( ! defined( 'CFEF_VERSION' ) ) {
-	define( 'CFEF_VERSION', '1.4.7' );
+	define( 'CFEF_VERSION', '1.6.1' );
 }
 /*** Defined constent for later use */
 define( 'CFEF_FILE', __FILE__ );
@@ -68,12 +68,42 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 		 */
 		private function __construct() {
 			add_action( 'init', array( $this, 'is_compatible' ) );
-			add_action( 'init', array( $this, 'text_domain_path_set' ) );
+			add_action('init', array($this, 'formdb_marketing_hello_plus'));
 			add_action( 'plugins_loaded',array($this,'compatibilityCheck'));
 			add_action( 'activated_plugin', array( $this, 'Cfef_plugin_redirection' ) );
 			add_action( 'elementor_pro/forms/actions/register', array($this,'cfef_register_new_form_actions') );
 			add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
+			add_action('wp_head', array( $this, 'stop_format_detection_in_safari' ));
 			$this->includes();
+		}
+
+		public function stop_format_detection_in_safari() {
+
+			if ( ! isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+				return;
+			}
+
+			$ua = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
+
+			$is_safari =
+				false !== strpos( $ua, 'Safari' ) &&
+				false !== strpos( $ua, 'Mobile' ) && // ensures mobile Safari
+				(
+					false !== strpos( $ua, 'iPhone' ) ||
+					false !== strpos( $ua, 'iPad' ) ||
+					false !== strpos( $ua, 'iPod' )
+				) &&
+				! preg_match( '/Chrome|CriOS|Chromium|OPR|Edg/i', $ua );
+
+			if ( $is_safari ) {
+				echo '<meta name="format-detection" content="telephone=no">' . "\n";
+			}
+		}
+
+
+		private function is_field_enabled($field_key) {
+			$enabled_elements = get_option('cfkef_enabled_elements', array());
+			return in_array(sanitize_key($field_key), array_map('sanitize_key', $enabled_elements));
 		}
 
 		private function includes() {
@@ -82,24 +112,45 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 		
 		}
 
+		public function formdb_marketing_hello_plus(){
+
+			if ( !is_plugin_active( 'sb-elementor-contact-form-db/sb_elementor_contact_form_db.php' ) && !defined("formdb_hello_plus_marketing_editor")){
+
+				define("formdb_hello_plus_marketing_editor", true);
+
+				require_once CFEF_PLUGIN_DIR . 'includes/helloplus_loader.php';
+				new HelloPlus_Widget_Loader();
+			}
+			
+		}
+
 
 		public function cfef_register_new_form_actions($form_actions_registrar){
 
-			if(get_option('condtional_logic', true)){
+			if($this->is_field_enabled('conditional_logic')){
 
 				include_once( __DIR__ .  '/includes/class-conditional-fields-redirection.php' );
 				include_once( __DIR__ .  '/includes/class-conditional-fields-email.php' );
 				$form_actions_registrar->register( new \Conditional_Fields_Redirection() );
 				$form_actions_registrar->register( new \Conditional_Email_Action() );
+
+				if ( !is_plugin_active( 'sb-elementor-contact-form-db/sb_elementor_contact_form_db.php' ) && !defined("formdb_elementor_marketing_editor")){
+
+					define("formdb_elementor_marketing_editor", true);
+
+					include_once( __DIR__ .  '/includes/class-form-to-sheet.php' );
+					$form_actions_registrar->register( new \Sheet_Action() );
+
+				}
 			}
 		}
 		/**
 		 * Check if Elementor Pro is installed and activated
 		 */
 		public function is_compatible() {
-			add_action( 'admin_init', array( $this, 'is_elementor_pro_exist' ), 5 );
+			// add_action( 'admin_init', array( $this, 'is_elementor_pro_exist' ), 5 );
 
-			if(get_option('condtional_logic', true)){
+			if($this->is_field_enabled('conditional_logic')){
 
 
 				include CFEF_PLUGIN_DIR . 'includes/class-create-conditional-fields.php';
@@ -131,14 +182,10 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 			if ( $plugin == plugin_basename( __FILE__ ) ) {
 
 				if ( current_user_can( 'activate_plugins' ) ) {
-					wp_redirect( admin_url( 'admin.php?page=cool-formkit' ) );
+					wp_safe_redirect( admin_url( 'admin.php?page=cool-formkit' ) );
 					exit;
 				}
 			}	
-		}
-
-		public function text_domain_path_set(){
-			load_plugin_textdomain( 'cfef', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 		}
 
 		public function compatibilityCheck(){
@@ -199,11 +246,10 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 			$message = sprintf(
 				// translators: %1$s replace with Conditional Fields for Elementor Form & %2$s replace with Elementor Pro.
 				esc_html__(
-					'%1$s requires %2$s to be installed and activated.',
-					'cfef'
+					'%1$s requires %2$s to be installed and activated.','conditional-fields-for-elementor-form'
 				),
-				esc_html__( 'Conditional Fields for Elementor Form', 'cfef' ),
-				esc_html__( 'Elementor Pro', 'cfef' ),
+				esc_html__( 'Conditional Fields for Elementor Form','conditional-fields-for-elementor-form' ),
+				esc_html__( 'Elementor Pro','conditional-fields-for-elementor-form' ),
 			); 
 			printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', esc_html( $message ) );
 			deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -259,7 +305,7 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 			
 			if ( CFEF_PLUGIN_BASE === $plugin_file ) {
 				$row_meta = [
-					'docs' => '<a href="https://docs.coolplugins.net/plugin/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=docs&utm_content=plugins_list" aria-label="' . esc_attr( esc_html__( 'Country Code Documentation', '' ) ) . '" target="_blank">' . esc_html__( 'Docs & FAQs', 'cfef' ) . '</a>'
+					'docs' => '<a href="https://docs.coolplugins.net/plugin/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=docs&utm_content=plugins_list" aria-label="' . esc_attr( esc_html__( 'Country Code Documentation','conditional-fields-for-elementor-form' ) ) . '" target="_blank">' . esc_html__( 'Docs & FAQs','conditional-fields-for-elementor-form' ) . '</a>'
 				];
 
 				$plugin_meta = array_merge( $plugin_meta, $row_meta );

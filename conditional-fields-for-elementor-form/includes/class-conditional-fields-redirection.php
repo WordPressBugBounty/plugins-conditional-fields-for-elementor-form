@@ -1,4 +1,7 @@
 <?php
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 /**
  * Class Conditional_Fields_Redirection
  */
@@ -64,7 +67,7 @@ class Conditional_Fields_Redirection extends Conditional_Fields_Redirection_Base
      * @return string
      */
     public function get_label() {
-        return esc_html__('Redirect Conditionally (Pro)', 'cfef');
+        return esc_html__('Redirect Conditionally (Pro)','conditional-fields-for-elementor-form');
     }
 
     /**
@@ -99,7 +102,7 @@ class Conditional_Fields_Redirection extends Conditional_Fields_Redirection_Base
         $widget->add_control(
             $cfef_conditional_logic_id,
             [
-                'label' => esc_html__('Enable Conditions', 'cfef'),
+                'label' => esc_html__('Enable Conditions','conditional-fields-for-elementor-form'),
                 'render_type' => 'none',
                 'type' => \Elementor\Controls_Manager::SWITCHER,
             ]
@@ -108,7 +111,7 @@ class Conditional_Fields_Redirection extends Conditional_Fields_Redirection_Base
         $widget->add_control(
             $this->controler_id('cfef_logic_mode'),
             [
-                'label' => esc_html__('', "cfef"),
+                'label' => '',
                 'type' => \Elementor\Controls_Manager::RAW_HTML,
                 'content_classes' => 'cfef_pro_link_button',
                 'raw' => '<a target="_blank" href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=panel_redirect_condition">Available In Conditional Fields Pro</a>',
@@ -163,7 +166,7 @@ class Conditional_Fields_Redirection_Two extends Conditional_Fields_Redirection 
      * @return string
      */
     public function get_label() {
-        return esc_html__('Redirect Conditionally 2 (Pro)', 'cfef');
+        return esc_html__('Redirect Conditionally 2 (Pro)','conditional-fields-for-elementor-form');
     }
     
     /**

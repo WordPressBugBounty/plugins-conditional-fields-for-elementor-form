@@ -25,7 +25,7 @@ class Conditional_Submit_Button{
 		$widget->add_control(
 			$cfef_conditional_logic_id_for_submit,
 			array(
-				'label' => esc_html__( 'Enable Conditions', 'cfef' ),
+				'label' => esc_html__( 'Enable Conditions','conditional-fields-for-elementor-form' ),
 				'render_type' => 'none',
 				'type' => Controls_Manager::SWITCHER,
             )
@@ -33,7 +33,7 @@ class Conditional_Submit_Button{
 		$widget->add_control(
 			$this->controler_new_id_for_submit_button( 'cfef_logic_mode' ),
 			array(
-				'label' => esc_html__( '', "cfef" ),
+				'label' => '',
                 'type' => Controls_Manager::RAW_HTML,
                 'content_classes' => 'cfef_pro_link_button',
 				'raw'          => '<a class="cfef_custom_html" target="_blank" href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=panel_button_condition">Available In Conditional Fields Pro</a>',

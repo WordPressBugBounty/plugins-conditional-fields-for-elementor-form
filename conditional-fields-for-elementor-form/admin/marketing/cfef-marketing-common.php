@@ -43,7 +43,25 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 			
 			$active_plugins = get_option( 'active_plugins', [] );
 
-			if ( in_array( 'elementor-pro/elementor-pro.php', $active_plugins ) || in_array('pro-elements/pro-elements.php', $active_plugins)) {
+			if(!defined("formdb_marketing_submission")){
+
+				define("formdb_marketing_submission", true);
+
+				if(!in_array( 'sb-elementor-contact-form-db/sb_elementor_contact_form_db.php', $active_plugins ) && !get_option('cfef_formdb_marketing_dismissed', false)) {
+					add_action('admin_enqueue_scripts', [$this, 'cfef_formdb_marketing_script']);
+		
+					add_action('in_admin_header', array($this, 'cfef_admin_notice_for_formsdb'));
+				}
+	
+				if(!in_array( 'sb-elementor-contact-form-db/sb_elementor_contact_form_db.php', $active_plugins ) && get_option('cfef_formdb_marketing_dismissed', false)){
+	
+					add_action('admin_enqueue_scripts', [$this, 'cfef_formdb_marketing_script']);
+	
+					add_action('admin_enqueue_scripts', array($this, 'formdb_plugin_install_button'));
+				}
+			}
+
+			if ( in_array( 'elementor-pro/elementor-pro.php', $active_plugins ) || in_array('pro-elements/pro-elements.php', $active_plugins) || in_array( 'hello-plus/hello-plus.php', $active_plugins )) {
 
 				add_action('elementor/init', [$this, 'cfef_init_hooks']);
 				
@@ -87,25 +105,110 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 		 * Handles the dismissal of marketing notices via AJAX.
 		 */
 
+		public function formdb_plugin_install_button(){
+
+			$screen = get_current_screen();
+
+            if ( $screen && 'elementor_page_e-form-submissions' === $screen->id ) {
+
+                $button_text = __('Save To Google Sheet - Install Plugin','conditional-fields-for-elementor-form');
+				$nonce = wp_create_nonce('cfef_install_nonce');
+                
+                $custom_js = "
+                    jQuery(document).ready(function($) {
+
+                        var button = '<a data-nonce=\"{$nonce}\" data-plugin=\"form-db\" target=\"_blank\" class=\"button button-primary cfef-install-plugin\">{$button_text}</a>';
+                        $('#e-form-submissions .e-form-submissions-search').prepend(button);
+                    });
+                ";
+                wp_add_inline_script('jquery-core', $custom_js);
+            }
+		}
+
+		public function cfef_formdb_marketing_script($page) {
+
+
+			if ( $page !== 'elementor_page_e-form-submissions' ) {
+				return;
+			}
+
+			wp_register_script(
+				'cfef-formdb-marketing-js',
+				CFEF_PLUGIN_URL . 'admin/marketing/js/cfef-form-marketing.js',
+				['jquery'],
+				CFEF_VERSION,
+				true
+			);
+
+			wp_enqueue_script('cfef-formdb-marketing-js');
+
+			wp_localize_script(
+				'cfef-formdb-marketing-js',
+				'cfefFormDBMarketing',
+				[
+					'nonce'    => wp_create_nonce('cfef_install_nonce'),
+					'plugin'   => 'form-db',
+					'ajax_url' => admin_url('admin-ajax.php'),
+					'formdb_type' => 'formdb_notice',
+					'formdb_dismiss_nonce' => wp_create_nonce('cfef_dismiss_nonce_formdb_notice'),
+					'redirect_to_formdb' => true
+				]
+			);
+		}
+		
+
+		public function cfef_admin_notice_for_formsdb()
+		{
+
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( ! isset($_GET['page']) || $_GET['page'] !== 'e-form-submissions' ) {
+				return;
+			}	
+
+			$admin_notices = \Elementor\Plugin::$instance->admin->get_component('admin-notices');
+
+			$notice_options = [
+				'description' => '<b>Did you Know?</b> you can also save your form submissions to Google Sheets.',
+				'dismissible' => true,
+				'id' => 'formdb-marketing-elementor-form-submissions',
+				'button_secondary' => [
+					'text' => esc_html__('Install Plugin','conditional-fields-for-elementor-form'),
+					'classes' => ['cfef-install-plugin'],
+					'url' => '',
+					'type' => 'cta',
+				]
+			];
+
+			$admin_notices->print_admin_notice($notice_options);
+		}
+
 		function cfef_dismiss_notice_callback() {
 
 			if ( ! current_user_can( 'manage_options' ) ) {
                  wp_send_json_error([ 'message' => 'Permission denied' ]);
 			}
 
-			$type  = sanitize_text_field($_POST['notice_type'] ?? '');
-           $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
-          
+			$type = isset( $_POST['notice_type'] ) ? sanitize_text_field( wp_unslash( $_POST['notice_type'] ) ) : '';
+
+          	$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+
 		    if ( empty( $nonce ) || empty( $type ) || ! wp_verify_nonce( $nonce, "cfef_dismiss_nonce_{$type}" ) ) {
             wp_send_json_error([ 'message' => 'Invalid nonce' ]);
          }
-			if ($type === 'cool_form') {
+
+		 	if ($type === 'cool_form') {
 				update_option('cfef_marketing_dismissed', true);
 				wp_send_json_success();
 
 			} elseif ($type === 'tec_notice') {
-				update_option('cfef_tec_notice_dismissed', true);
+				update_option('ccfef_tec_notice_dismissed', true);
 				wp_send_json_success();
+			}
+
+			elseif ($type === 'formdb_notice') {
+				update_option('cfef_formdb_marketing_dismissed', true);
+				wp_send_json_success();
+
 			}
 
 			wp_send_json_error(['message' => 'Unknown notice type']);
@@ -113,15 +216,26 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 
 			
 		public function cfef_register_controls($element) {
+
+			// Get all controls registered on this element
+			$controls = $element->get_controls();
+
+			// Control ID you want to check
+			$control_id = 'lgefep_taxonomy_dropdown';
+
+			// If control already exists, stop
+			if ( isset( $controls[ $control_id ] ) ) {
+				return;
+			}
 			
 			$element->add_control(
 					'lgefep_taxonomy_dropdown',
 					[
-						'label' => __('Enable Smart Filters', 'loop-grid-extender-for-elementor-pro'),
+						'label' => __('Enable Smart Filters','conditional-fields-for-elementor-form'),
 						'type' => \Elementor\Controls_Manager::SWITCHER,
 						'default' => 'no',
-						'label_on' => __('Yes', 'loop-grid-extender-for-elementor-pro'),
-						'label_off' => __('No', 'loop-grid-extender-for-elementor-pro'),
+						'label_on' => __('Yes','conditional-fields-for-elementor-form'),
+						'label_off' => __('No','conditional-fields-for-elementor-form'),
 						'return_value' => 'yes',
 						'condition' => [
 							'selected_element!' => '',
@@ -171,6 +285,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 
 
 
+				//phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 				 define( 'EVENT_WIDGET_NOTICE_SHOWN', true );
 
 
@@ -196,13 +311,17 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 			);
 
 			// Check if it's tribe_events post type or tec settings page
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$is_tribe_post    = isset($_GET['post_type']) && sanitize_key($_GET['post_type']) === 'tribe_events';
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$is_tec_settings  = isset($_GET['page']) && sanitize_key($_GET['page']) === 'tec-events-settings';
 
 			// Only show notice if not on taxonomy screens
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( ($is_tribe_post || $is_tec_settings) && !isset($_GET['taxonomy']) ) {
 
 				// If we're on tribe post and page param is set, require tec settings page specifically
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				if ($is_tribe_post && isset($_GET['page']) && sanitize_key($_GET['page']) !== 'tec-events-settings') {
 					return;
 				}
@@ -235,7 +354,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 
 		public function cfef_init_hooks() {
 
-			add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_editor_scripts']);
+			add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_editor_scripts'], 0);
 			add_action('elementor/editor/after_enqueue_styles', [$this, 'enqueue_editor_styles']);
 		}
 
@@ -247,16 +366,27 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 
 		public function cfef_add_acf_repeater_mkt_query_controls($element) {
 
+			// Get all controls registered on this element
+			$controls = $element->get_controls();
+
+			// Control ID you want to check
+			$control_id = 'lgefep_mkt_country_notice';
+
+			// If control already exists, stop
+			if ( isset( $controls[ $control_id ] ) ) {
+				return;
+			}
+
 			$element->add_control(
 
 				'lgefep_mkt_country_notice',
 					array(
 						'name'            => 'cfef_mkt_country_notice',
 						'type'            => \Elementor\Controls_Manager::SWITCHER,
-						'label'        => esc_html__('Use ACF Repeater', 'country-code-for-elementor-form-telephone-field'),
+						'label'        => esc_html__('Use ACF Repeater','conditional-fields-for-elementor-form'),
 						'type'         => \Elementor\Controls_Manager::SWITCHER,
-						'label_on'     => esc_html__('Yes', 'country-code-for-elementor-form-telephone-field'),
-						'label_off'    => esc_html__('No', 'country-code-for-elementor-form-telephone-field'),
+						'label_on'     => esc_html__('Yes','conditional-fields-for-elementor-form'),
+						'label_off'    => esc_html__('No','conditional-fields-for-elementor-form'),
 
 					),
 			);
@@ -323,7 +453,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 
 
              if (! current_user_can('install_plugins')) {
-				$status['errorMessage'] = __('Sorry, you are not allowed to install plugins on this site.');
+				$status['errorMessage'] = __('Sorry, you are not allowed to install plugins on this site.','conditional-fields-for-elementor-form');
 				wp_send_json_error($status);
 			}
 
@@ -333,7 +463,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 				wp_send_json_error(array(
 					'slug'         => '',
 					'errorCode'    => 'no_plugin_specified',
-					'errorMessage' => __('No plugin specified.'),
+					'errorMessage' => __('No plugin specified.' ,'conditional-fields-for-elementor-form'),
 				));
 			}
 
@@ -433,7 +563,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 					global $wp_filesystem;
 
 					$status['errorCode']    = 'unable_to_connect_to_filesystem';
-					$status['errorMessage'] = __('Unable to connect to the filesystem. Please confirm your credentials.');
+					$status['errorMessage'] = __('Unable to connect to the filesystem. Please confirm your credentials.','conditional-fields-for-elementor-form');
 
 					if ($wp_filesystem instanceof WP_Filesystem_Base && is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()) {
 						$status['errorMessage'] = esc_html($wp_filesystem->errors->get_error_message());
@@ -498,9 +628,6 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 											<button class="elementor-control-notice-dismiss tooltip-target cfef-dismiss-cross cfef-dismiss-notice" data-notice="cool_form" data-nonce="' . esc_attr(wp_create_nonce('cfef_dismiss_nonce_cool_form')) . '">
 												<i class="eicon eicon-close" aria-hidden="true"></i>
 											</button></div></div>',
-							'tab'          => 'content',
-							'inner_tab'    => 'form_fields_conditions_tab',
-							'tabs_wrapper' => 'form_fields_tabs',
 						]
 					);
 			}
@@ -513,10 +640,10 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 				
 				'cfef-mkt-country-conditions' => array(
 						'name'         => 'cfef-mkt-country-conditions',
-						'label'        => esc_html__('Enable Country Code', 'country-code-for-elementor-form-telephone-field'),
+						'label'        => esc_html__('Enable Country Code','conditional-fields-for-elementor-form'),
 						'type'         => \Elementor\Controls_Manager::SWITCHER,
-						'label_on'     => esc_html__('Yes', 'country-code-for-elementor-form-telephone-field'),
-						'label_off'    => esc_html__('No', 'country-code-for-elementor-form-telephone-field'),
+						'label_on'     => esc_html__('Yes','conditional-fields-for-elementor-form'),
+						'label_off'    => esc_html__('No','conditional-fields-for-elementor-form'),
 						'condition'    => array(
 							'field_type' => array('tel', 'ehp-tel'),
 						),

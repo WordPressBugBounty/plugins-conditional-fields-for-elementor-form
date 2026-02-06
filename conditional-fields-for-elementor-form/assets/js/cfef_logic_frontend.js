@@ -282,7 +282,7 @@
                 var selectBox = formField.find("select");
                 if (selectBox.length > 0 && selectBox.find("option").length > 0) {
                     var selectedValue = selectBox.val();
-                    if (selectedValue == 'premium1@' || selectedValue[0] == 'premium1@') {
+                    if (selectedValue == 'premium1@' || selectedValue[0] == 'premium1@' || selectBox.find("option[value='premium1@']").length > 0) {
                         selectBox.find("option[value='premium1@']").remove();      
                         const selectedOption = selectBox.find("option[selected='selected']")[0];
                         let value = $(selectedOption).attr('value') ? $(selectedOption).attr('value'):selectBox.find("option:first").val()
@@ -290,8 +290,15 @@
                     }
                 }
             } else {
+                var input_ele = formField.find("input");
+
                 var FieldValues = formField.find("input").val();
                 if (FieldValues == "cool23plugins") {
+
+                    if(input_ele.hasClass("hide-fme-mask-input")){
+                        unprefixClassesFmeMask(input_ele[0]);
+                    }
+
                     let value=formField.find("input").attr('value') ? formField.find("input").attr('value') : '';
                     formField.find("input").val(value);
                 }
@@ -405,6 +412,16 @@
                     selectBox.val(optionValue);
                 }
             } else if (formField.hasClass("elementor-field-type-text")) {
+
+                let input_ele = formField.find("input");
+
+                if(input_ele.hasClass('fme-mask-input')){
+                    let mask_error_div = formField.find(".mask-error");
+                    mask_error_div.val("");
+                    mask_error_div.removeAttr("style");
+                    prefixClassesFmeMask(input_ele[0]);
+                }
+
                 let value = formField.find("input").val()
                 if(value === ""){
                     formField.find("input").val("cool23plugins");
@@ -465,6 +482,51 @@
             }
             return null;
           }
+
+
+        // add hide prefix to classes which have fme or mask
+
+        function prefixClassesFmeMask(element, prefix = 'hide-') {
+            const classes = element.className.split(/\s+/);
+
+            // Find all classes containing "fme" or "mask"
+            const target = classes.filter(c => /fme|mask/i.test(c));
+
+            if (target.length === 0) return;
+
+            // Remove original target classes
+            element.classList.remove(...target);
+
+            // Add prefixed versions
+            const prefixed = target.map(c => `${prefix}${c}`);
+            element.classList.add(...prefixed);
+        }
+
+
+        // remove hide prefix to classes which have fme or mask
+
+        function unprefixClassesFmeMask(element, prefix = 'hide-') {
+            const classes = element.className.split(/\s+/);
+
+            // Find all classes that start with "hide-" and after removing it, contain "fme" or "mask"
+            const target = classes.filter(c => {
+                if (c.startsWith(prefix)) {
+                    const original = c.slice(prefix.length);
+                    return /fme|mask/i.test(original);
+                }
+                return false;
+            });
+
+            if (target.length === 0) return;
+
+            // Remove prefixed versions
+            element.classList.remove(...target);
+
+            // Add original class names back (remove "hide-")
+            const restored = target.map(c => c.slice(prefix.length));
+            element.classList.add(...restored);
+        }
+
 
 
 
@@ -758,6 +820,14 @@
            jQuery(this).removeClass('cfef-hidden-step-field cfef-next-to-submit');
 
           });
+
+          form.find('input').each(function() {
+                let $input = $(this);
+
+                if ($input.hasClass("hide-fme-mask-input")) {
+                    unprefixClassesFmeMask($input[0]);
+                }
+            });
       });
 
 

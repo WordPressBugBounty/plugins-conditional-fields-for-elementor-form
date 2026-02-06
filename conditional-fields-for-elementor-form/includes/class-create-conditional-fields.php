@@ -7,6 +7,12 @@
  * @version 1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	exit();
+}
+
 use Elementor\Widget_Base;
 use ElementorPro\Modules\Forms;
 use Elementor\Controls_Manager;
@@ -61,8 +67,9 @@ class Create_Conditional_Fields {
 				'cfef_logic',
 				'my_script_vars_elementor', 
 				array(
-					'no_input_step' => __('No input is required on this step. Just click "%s" to proceed.', 'cfef'),
-					'next_button'   => __('Next', 'cfef'), 
+					// translators: next button text
+					'no_input_step' => __('No input is required on this step. Just click "%s" to proceed.','conditional-fields-for-elementor-form'),
+					'next_button'   => __('Next','conditional-fields-for-elementor-form'), 
 				)
 			);
 	
@@ -77,9 +84,9 @@ class Create_Conditional_Fields {
 				'cfef_logic_hello',
 				'my_script_vars',
 				array(
-					'no_input_required'    => __('No input is required on this step. Just click "', 'cfef'),
-					'to_proceed'           => __('" to proceed.', 'cfef'),
-					'next_button_default'  => __('Next', 'cfef'), 
+					'no_input_required'    => __('No input is required on this step. Just click "','conditional-fields-for-elementor-form'),
+					'to_proceed'           => __('" to proceed.','conditional-fields-for-elementor-form'),
+					'next_button_default'  => __('Next','conditional-fields-for-elementor-form'), 
 					'pluginConstant' => CFEF_PLUGIN_DIR,
 				)
 			);
@@ -87,7 +94,7 @@ class Create_Conditional_Fields {
 		}
 
 		// Add hidden class CSS
-		wp_register_style( 'hide_field_class_style', false );
+		wp_register_style( 'hide_field_class_style', false, array(), CFEF_VERSION);
 		wp_enqueue_style( 'hide_field_class_style' );
 		wp_add_inline_style(
 			'hide_field_class_style',
@@ -127,7 +134,7 @@ class Create_Conditional_Fields {
 					array(
 						'type'         => 'tab',
 						'tab'          => 'content',
-						'label'        => esc_html__( 'Conditions', 'cfef' ),
+						'label'        => esc_html__( 'Conditions','conditional-fields-for-elementor-form' ),
 						'tabs_wrapper' => 'form_fields_tabs',
 						'name'         => 'form_fields_conditions_tab',
 						'condition'    => array(
@@ -136,7 +143,7 @@ class Create_Conditional_Fields {
 					),
 				'cfef_logic'                 => array(
 					'name'         => 'cfef_logic',
-					'label'        => esc_html__( 'Enable Conditions', 'cfef' ),
+					'label'        => esc_html__( 'Enable Conditions','conditional-fields-for-elementor-form' ),
 					'type'         => Controls_Manager::SWITCHER,
 					'tab'          => 'content',
 					'inner_tab'    => 'form_fields_conditions_tab',
@@ -145,16 +152,16 @@ class Create_Conditional_Fields {
 				),
 				'cfef_logic_mode'            => array(
 					'name'         => 'cfef_logic_mode',
-					'label'        => esc_html__( 'Show / Hide Field', 'cfef' ),
+					'label'        => esc_html__( 'Show / Hide Field','conditional-fields-for-elementor-form' ),
 					'type'         => Controls_Manager::CHOOSE,
 					'tab'          => 'content',
 					'options'      => array(
 						'show' => array(
-							'title' => esc_html__( 'Show', 'cfef' ),
+							'title' => esc_html__( 'Show','conditional-fields-for-elementor-form' ),
 							'icon'  => 'fa fa-eye',
 						),
 						'hide' => array(
-							'title' => esc_html__( 'Hide', 'cfef' ),
+							'title' => esc_html__( 'Hide','conditional-fields-for-elementor-form' ),
 							'icon'  => 'fa fa-eye-slash',
 						),
 					),
@@ -167,15 +174,15 @@ class Create_Conditional_Fields {
 				),
 				'cfef_logic_meet'            => array(
 					'name'         => 'cfef_logic_meet',
-					'label'        => esc_html__( 'Conditions Trigger', 'cfef' ),
+					'label'        => esc_html__( 'Conditions Trigger','conditional-fields-for-elementor-form' ),
 					'type'         => Controls_Manager::SELECT,
 					'tab'          => 'content',
 					'condition'    => array(
 						'cfef_logic' => 'yes',
 					),
 					'options'      => array(
-						'All' => esc_html__( 'All - AND Conditions', 'cfef' ),
-						'Any' => esc_html__( 'Any - OR Conditions', 'cfef' ),
+						'All' => esc_html__( 'All - AND Conditions','conditional-fields-for-elementor-form' ),
+						'Any' => esc_html__( 'Any - OR Conditions','conditional-fields-for-elementor-form' ),
 					),
 					'default'      => 'All',
 					'inner_tab'    => 'form_fields_conditions_tab',
@@ -184,7 +191,7 @@ class Create_Conditional_Fields {
 
 				'cfef_repeater_data'         => array(
 					'name'           => 'cfef_repeater_data',
-					'label'          => esc_html__( 'Show / Hide Fields If', 'cfef' ),
+					'label'          => esc_html__( 'Show / Hide Fields If','conditional-fields-for-elementor-form' ),
 					'type'           => 'field_condition_repeater',
 					'tab'            => 'content',
 					'inner_tab'      => 'form_fields_conditions_tab',
@@ -192,7 +199,7 @@ class Create_Conditional_Fields {
 					'fields'         => array(
 						array(
 							'name'        => 'cfef_logic_field_id',
-							'label'       => esc_html__( 'Field ID', 'cfef' ),
+							'label'       => esc_html__( 'Field ID','conditional-fields-for-elementor-form' ),
 							'type'        => Controls_Manager::TEXT,
 							'label_block' => true,
 							'default'     => '',
@@ -202,28 +209,28 @@ class Create_Conditional_Fields {
 						),
 						array(
 							'name'        => 'cfef_logic_field_is',
-							'label'       => esc_html__( 'Operator', 'cfef' ),
+							'label'       => esc_html__( 'Operator','conditional-fields-for-elementor-form' ),
 							'type'        => Controls_Manager::SELECT,
 							'label_block' => true,
 							'options'     => array(
-								'==' => esc_html__( 'is equal ( == )', 'cfef' ),
-								'!=' => esc_html__( 'is not equal (!=)', 'cfef' ),
-								'>'  => esc_html__( 'greater than (>)', 'cfef' ),
-								'<'  => esc_html__( 'less than (<)', 'cfef' ),
-								'>=' => esc_html__( 'greater than equal (>=)', 'cfef' ),
-								'<=' => esc_html__( 'less than equal (<=)', 'cfef' ),
-								'e'  => esc_html__( "empty ('')", 'cfef' ),
-								'!e' => esc_html__( 'not empty', 'cfef' ),
-								'c'  => esc_html__( 'contains', 'cfef' ),
-								'!c' => esc_html__( 'does not contain', 'cfef' ),
-								'^'  => esc_html__( 'starts with', 'cfef' ),
-								'~'  => esc_html__( 'ends with', 'cfef' ),
+								'==' => esc_html__( 'is equal ( == )','conditional-fields-for-elementor-form' ),
+								'!=' => esc_html__( 'is not equal (!=)','conditional-fields-for-elementor-form' ),
+								'>'  => esc_html__( 'greater than (>)','conditional-fields-for-elementor-form' ),
+								'<'  => esc_html__( 'less than (<)','conditional-fields-for-elementor-form' ),
+								'>=' => esc_html__( 'greater than equal (>=)','conditional-fields-for-elementor-form' ),
+								'<=' => esc_html__( 'less than equal (<=)','conditional-fields-for-elementor-form' ),
+								'e'  => esc_html__( "empty ('')",'conditional-fields-for-elementor-form' ),
+								'!e' => esc_html__( 'not empty','conditional-fields-for-elementor-form' ),
+								'c'  => esc_html__( 'contains','conditional-fields-for-elementor-form' ),
+								'!c' => esc_html__( 'does not contain','conditional-fields-for-elementor-form' ),
+								'^'  => esc_html__( 'starts with','conditional-fields-for-elementor-form' ),
+								'~'  => esc_html__( 'ends with','conditional-fields-for-elementor-form' ),
 							),
 							'default'     => '==',
 						),
 						array(
 							'name'        => 'cfef_logic_compare_value',
-							'label'       => esc_html__( 'Value', 'cfef' ),
+							'label'       => esc_html__( 'Value','conditional-fields-for-elementor-form' ),
 							'type'        => Controls_Manager::TEXT,
 							'label_block' => true,
 							'default'     => '',
@@ -267,7 +274,7 @@ class Create_Conditional_Fields {
 				$url          = admin_url( 'admin-ajax.php' );
 				$html         = '<div class="cfef_elementor_review_wrapper">';
 				$html        .= '<div id="cfef_elementor_review_dismiss" data-url="' . esc_url( $url ) . '" data-nonce="' . esc_attr( $review_nonce ) . '">Close Notice X</div>
-								<div class="cfef_elementor_review_msg">' . __( 'Hope this addon solved your problem!', 'cfef' ) . '<br><a href="https://wordpress.org/support/plugin/conditional-fields-for-elementor-form/reviews/#new-post" target="_blank"">Share the love with a ⭐⭐⭐⭐⭐ rating.</a><br><br></div>
+								<div class="cfef_elementor_review_msg">' . __( 'Hope this addon solved your problem!','conditional-fields-for-elementor-form' ) . '<br><a href="https://wordpress.org/support/plugin/conditional-fields-for-elementor-form/reviews/#new-post" target="_blank"">Share the love with a ⭐⭐⭐⭐⭐ rating.</a><br><br></div>
 								<div class="cfef_elementor_demo_btn"><a href="https://wordpress.org/support/plugin/conditional-fields-for-elementor-form/reviews/#new-post" target="_blank">Submit Review</a></div>
 								</div>';
 
@@ -543,11 +550,11 @@ class Create_Conditional_Fields {
 	// Elementor Review notice ajax request function
 	public function cfef_elementor_review_notice() {
 		if ( ! check_ajax_referer( 'cfef_elementor_review', 'nonce', false ) ) {
-			wp_send_json_error( __( 'Invalid security token sent.', 'cfef' ) );
+			wp_send_json_error( __( 'Invalid security token sent.','conditional-fields-for-elementor-form' ) );
 			wp_die( '0', 400 );
 		}
 
-		if ( isset( $_POST['cfef_notice_dismiss'] ) && 'true' === sanitize_text_field($_POST['cfef_notice_dismiss']) ) {
+		if ( isset( $_POST['cfef_notice_dismiss'] ) && 'true' === sanitize_text_field(wp_unslash($_POST['cfef_notice_dismiss'])) ) {
 			update_option( 'cfef_elementor_notice_dismiss', 'yes' );
 		}
 		exit;

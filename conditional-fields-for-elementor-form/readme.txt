@@ -3,13 +3,14 @@ Contributors: coolplugins, narinder-singh, satindersingh
 Donate link: https://donate.stripe.com/5kQdR92iBevO75WbPm6c00i
 Tags: conditional logic, conditional fields, elementor form, elementor, elementor form builder
 Requires at least: 5.0
-Tested up to: 6.8.2
+Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 1.4.7
+Stable tag: 1.6.1
+
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Elementor tested up to: 3.32.2
-Elementor Pro tested up to: 3.32.1
+Elementor tested up to: 3.35.0
+Elementor Pro tested up to: 3.35.0
 
 Add conditional fields to Elementor forms and apply if-else conditional logic to show or hide Elementor form widget fields via dynamic rules.
 
@@ -230,6 +231,23 @@ Save or update the page and preview the form to see the conditions in action.
 ---
 
 == Changelog ==
+
+= 1.6.1 | Feb 04, 2026 =
+* Improved: Code improvements.
+* Tested up to: Elementor 3.35.0 and Elementor Pro 3.35.0.
+
+= 1.6.0 | Jan 14, 2026 =
+* Fixed: Fix issues reported by "Plugin Check" plugin.
+* Fixed: Minor textual changes and improved plugin recommendations.
+
+= 1.5.0 | Dec 9, 2025 =
+* Fixed: Fix iOS Safari Telephone Number Auto-Detection.
+
+= 1.4.9 | Nov 27, 2025 =
+* Fixed: Setting ID mismatch causing updates to not reflect in all versions.
+
+= 1.4.8 | Oct 16, 2025 =
+* Fixed: form submission issue with required hidden mask field.
 
 = 1.4.7 | Oct 3, 2025 =
 * Fixed: Conditional navigation ensures hidden steps are skipped and users are routed correctly.
