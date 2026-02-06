@@ -5,7 +5,7 @@ Tags: conditional logic, conditional fields, elementor form, elementor, elemento
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -231,6 +231,9 @@ Save or update the page and preview the form to see the conditions in action.
 ---
 
 == Changelog ==
+
+= 1.6.2 | Feb 06, 2026 =
+* Fixed: Incorrect plugin slug that could prevent proper installation.
 
 = 1.6.1 | Feb 04, 2026 =
 * Improved: Code improvements.

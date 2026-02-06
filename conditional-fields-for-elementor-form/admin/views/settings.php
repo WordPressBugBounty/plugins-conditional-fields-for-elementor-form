@@ -322,7 +322,15 @@ $cdn_image = get_option('cfefp_cdn_image', '');
                         <td class="cool-formkit-table-td">
                                 <input type="text" id="cfkef_country_code_api_key" name="cfkef_country_code_api_key" value="<?php echo esc_attr($api_key_one); ?>" class="regular-text cool-formkit-input" disabled="disabled"/>
                                 <p class="description cool-formkit-description"><?php esc_html_e('Auto-detect country code in the Tel field via IP address.','conditional-fields-for-elementor-form'); ?></p>
-                                <p class="description cool-formkit-description"><?php esc_html_e('We use <a href="https://ipapi.co/#pricing" target="_blank">ipapi.co</a> to auto-detect the country code in the telephone field using the IP address. It offers 1000 free IP lookups per day. No API key is needed for low requests or if you are not using the auto-detect feature. However, please add an API key if you have a lot of users or purchase a premium plan.','conditional-fields-for-elementor-form'); ?></p>
+                                <p class="description cool-formkit-description">
+                                    <?php 
+                                    echo wp_kses_post(
+                                        __(
+                                            'We use <a href="https://ipapi.co/#pricing" target="_blank">ipapi.co</a> to auto-detect the country code in the telephone field using the IP address. It offers 1000 free IP lookups per day. No API key is needed for low requests or if you are not using the auto-detect feature. However, please add an API key if you have a lot of users or purchase a premium plan.','conditional-fields-for-elementor-form'
+                                        )
+                                    )
+                                    ?>
+                                </p>
                         </td>
                     </tr>
                     <tr id="other-api-row">
