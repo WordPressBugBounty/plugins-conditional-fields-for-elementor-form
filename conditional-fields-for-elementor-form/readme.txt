@@ -131,6 +131,8 @@ People love this plugin because it delivers a much-needed feature for Elementor 
 
 ---
 
+**Use of 3rd Party Services:** This plugin connects to the Cool Plugins feedback server only for optional usage data sharing and voluntary feedback submission (for example, during plugin deactivation). Data is transmitted solely after explicit user consent. No hidden tracking is performed, and no frontend visitor or site user data is collected.  For more details, please review our [Data Usage Policy](https://my.coolplugins.net/terms/usage-tracking/), [TOS](https://my.coolplugins.net/terms/), and [Privacy Policy](https://my.coolplugins.net/terms/privacy-policy/).
+
 == Frequently Asked Questions ==
 
 = Can I hide/show or disable/enable Elementor form fields with conditional logic? =
