@@ -24,6 +24,8 @@ $conditional_fields_installed_date = get_option('cfef-installDate');
 $conditional_fields_pro_installed_date = get_option('cfefp-installDate');
 $country_code_installed_date = get_option('ccfef-installDate');
 
+$stored_oldest_plugin = get_option('oldest_plugin');
+
 $plugins_dates = [
     'fim_plugin'  => $form_mask_installed_date,
     'cfef_plugin' => $conditional_fields_installed_date,
@@ -33,11 +35,25 @@ $plugins_dates = [
 
 $plugins_dates = array_filter($plugins_dates);
 
-if (!empty($plugins_dates)) {
-    asort($plugins_dates);
-    $first_plugin = key($plugins_dates);
-} else {
-    $first_plugin = 'cfef_plugin';
+$install_by_plugin = get_option('conditional-fields-install-by');
+
+if(! empty( $install_by_plugin )){
+    $first_plugin = $install_by_plugin;
+}
+else if ( ! empty( $stored_oldest_plugin ) ) {
+    $first_plugin = $stored_oldest_plugin;
+
+}else{
+
+    if (!empty($plugins_dates)) {
+        asort($plugins_dates);
+        $first_plugin = key($plugins_dates);
+    } else {
+        $first_plugin = 'cfef_plugin';
+    }
+
+    // Store it so it never changes on re-install
+    update_option('oldest_plugin', $first_plugin);
 }
 
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -660,7 +676,7 @@ $input_form_mask_features = array(
                                                     <?php endif; ?>
                                                 </h4>
                                                 <div>
-                                                    <a href="<?php echo esc_url($element['icon']) ?>" title="Documentation" target="_blank" rel="noreferrer">
+                                                    <a href="<?php echo esc_url($element['how_to']) ?>" title="Documentation" target="_blank" rel="noreferrer">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                                             <path fill="#000" d="M21 11V3h-8v2h4v2h-2v2h-2v2h-2v2H9v2h2v-2h2v-2h2V9h2V7h2v4zM11 5H3v16h16v-8h-2v6H5V7h6z" />
                                                         </svg>
@@ -826,7 +842,7 @@ $input_form_mask_features = array(
                                                         <?php endif; ?>
                                                     </h4>
                                                     <div>
-                                                        <a href="<?php echo esc_url($element['icon']) ?>" title="Documentation" target="_blank" rel="noreferrer">
+                                                        <a href="<?php echo esc_url($element['how_to']) ?>" title="Documentation" target="_blank" rel="noreferrer">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                                                 <path fill="#000" d="M21 11V3h-8v2h4v2h-2v2h-2v2h-2v2H9v2h2v-2h2v-2h2V9h2V7h2v4zM11 5H3v16h16v-8h-2v6H5V7h6z" />
                                                             </svg>
@@ -977,7 +993,7 @@ $input_form_mask_features = array(
                                                         <?php endif; ?>
                                                     </h4>
                                                     <div>
-                                                        <a href="<?php echo esc_url($element['icon']) ?>" title="Documentation" target="_blank" rel="noreferrer">
+                                                        <a href="<?php echo esc_url($element['how_to']) ?>" title="Documentation" target="_blank" rel="noreferrer">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                                                 <path fill="#000" d="M21 11V3h-8v2h4v2h-2v2h-2v2h-2v2H9v2h2v-2h2v-2h2V9h2V7h2v4zM11 5H3v16h16v-8h-2v6H5V7h6z" />
                                                             </svg>
@@ -1106,7 +1122,7 @@ $input_form_mask_features = array(
                                             
                                         </h4>
                                         <div>
-                                            <a href="<?php echo esc_url($element['icon']) ?>" title="Documentation" target="_blank" rel="noreferrer">
+                                            <a href="<?php echo esc_url($element['demo']) ?>" title="Documentation" target="_blank" rel="noreferrer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                                     <path fill="#000" d="M21 11V3h-8v2h4v2h-2v2h-2v2h-2v2H9v2h2v-2h2v-2h2V9h2V7h2v4zM11 5H3v16h16v-8h-2v6H5V7h6z" />
                                                 </svg>

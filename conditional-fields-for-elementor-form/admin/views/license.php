@@ -10,6 +10,8 @@ $conditional_fields_installed_date = get_option('cfef-installDate');
 $conditional_fields_pro_installed_date = get_option('cfefp-installDate');
 $country_code_installed_date = get_option('ccfef-installDate');
 
+$stored_oldest_plugin = get_option('oldest_plugin');
+
 $plugins_dates = [
     'fim_plugin'  => $form_mask_installed_date,
     'cfef_plugin' => $conditional_fields_installed_date,
@@ -19,11 +21,25 @@ $plugins_dates = [
 
 $plugins_dates = array_filter($plugins_dates);
 
-if (!empty($plugins_dates)) {
-    asort($plugins_dates);
-    $first_plugin = key($plugins_dates);
-} else {
-    $first_plugin = 'cfef_plugin';
+$install_by_plugin = get_option('conditional-fields-install-by');
+
+if(! empty( $install_by_plugin )){
+    $first_plugin = $install_by_plugin;
+}
+else if ( ! empty( $stored_oldest_plugin ) ) {
+    $first_plugin = $stored_oldest_plugin;
+
+}else{
+
+    if (!empty($plugins_dates)) {
+        asort($plugins_dates);
+        $first_plugin = key($plugins_dates);
+    } else {
+        $first_plugin = 'cfef_plugin';
+    }
+
+    // Store it so it never changes on re-install
+    update_option('oldest_plugin', $first_plugin);
 }
 
 

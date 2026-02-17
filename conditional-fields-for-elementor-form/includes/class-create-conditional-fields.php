@@ -22,6 +22,7 @@ use ElementorPro\Plugin;
 	/**
 	 * Class for creating conditional fields and varify logic comparision before send
 	 */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 class Create_Conditional_Fields {
 
 	/**

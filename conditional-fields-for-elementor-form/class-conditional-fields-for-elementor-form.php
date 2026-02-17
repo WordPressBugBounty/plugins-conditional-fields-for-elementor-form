@@ -3,12 +3,13 @@
  * Plugin Name: Conditional Fields for Elementor Form
  * Plugin URI:https://coolplugins.net/
  * Description: The Conditional Fields for Elementor plugin add-on used to show and hide form fields based on conditional input values.
- * Version: 1.6.2
+ * Version: 1.6.3
  * Author:  Cool Plugins
  * Author URI: https://coolplugins.net/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
- * License:GPL2
+ * License:GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:conditional-fields-for-elementor-form
- * Elementor tested up to:  3.35.0
+ * Elementor tested up to:  3.35.4
  * Elementor Pro tested up to:  3.35.0
  *
  * @package cfef
@@ -20,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 if ( ! defined( 'CFEF_VERSION' ) ) {
-	define( 'CFEF_VERSION', '1.6.2' );
+	define( 'CFEF_VERSION', '1.6.3' );
 }
 /*** Defined constent for later use */
 define( 'CFEF_FILE', __FILE__ );
@@ -115,7 +116,7 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 		public function formdb_marketing_hello_plus(){
 
 			if ( !is_plugin_active( 'sb-elementor-contact-form-db/sb_elementor_contact_form_db.php' ) && !defined("formdb_hello_plus_marketing_editor")){
-
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 				define("formdb_hello_plus_marketing_editor", true);
 
 				require_once CFEF_PLUGIN_DIR . 'includes/helloplus_loader.php';
@@ -135,7 +136,7 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 				$form_actions_registrar->register( new \Conditional_Email_Action() );
 
 				if ( !is_plugin_active( 'sb-elementor-contact-form-db/sb_elementor_contact_form_db.php' ) && !defined("formdb_elementor_marketing_editor")){
-
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 					define("formdb_elementor_marketing_editor", true);
 
 					include_once( __DIR__ .  '/includes/class-form-to-sheet.php' );

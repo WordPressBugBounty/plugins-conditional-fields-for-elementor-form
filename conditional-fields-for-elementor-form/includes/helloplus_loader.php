@@ -5,6 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!class_exists('HelloPlus_Widget_Loader')) {
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
     class HelloPlus_Widget_Loader
     {
 
