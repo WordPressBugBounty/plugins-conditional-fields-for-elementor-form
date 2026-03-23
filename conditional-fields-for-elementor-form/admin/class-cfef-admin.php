@@ -64,7 +64,7 @@ class CFEF_Admin {
 
         $this->plugin_name = $plugin_name;
         $this->version = $version;
-        add_action('admin_menu', array($this, 'add_plugin_admin_menu'),999);
+        add_action('admin_menu', array($this, 'add_plugin_admin_menu'),998);
         add_action('admin_init', array($this, 'register_form_elements_settings'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_styles'));
 
@@ -501,6 +501,7 @@ class CFEF_Admin {
     public function enqueue_admin_styles() {
 
         wp_enqueue_style('cfkef-admin-global-style', CFEF_PLUGIN_URL . 'assets/css/global-admin-style.css', array(), $this->version, 'all');
+        wp_enqueue_script('cfkef-admin-global-script', CFEF_PLUGIN_URL . 'assets/js/global-admin.js', array('jquery'), $this->version, true);
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (isset($_GET['page']) &&(strpos(sanitize_text_field(wp_unslash($_GET['page'])), 'cool-formkit') !== false || strpos(sanitize_text_field(wp_unslash($_GET['page'])), 'cfkef-entries') !== false)){
