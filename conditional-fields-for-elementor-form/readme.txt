@@ -5,12 +5,12 @@ Tags: conditional logic, conditional fields, elementor form, elementor, elemento
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Elementor tested up to: 3.35.7
-Elementor Pro tested up to: 3.35.0
+Elementor tested up to: 4.0.0
+Elementor Pro tested up to: 4.0.0
 
 Add conditional fields to Elementor forms and apply if-else conditional logic to show or hide Elementor form widget fields via dynamic rules.
 
@@ -233,6 +233,9 @@ Save or update the page and preview the form to see the conditions in action.
 ---
 
 == Changelog ==
+
+= 1.6.5 | Apr 01, 2026 =
+* Tested up to: Elementor 4.0.0 and Elementor Pro 4.0.0.
 
 = 1.6.4 | Mar 23, 2026 =
 * Fixed: Admin dashboard UI fixes.
