@@ -50,7 +50,14 @@ class cfef_feedback {
 	}
 
 	public function cfef_dismiss_review_notice(){
-		$rs = update_option( $this->review_option, 'yes' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		check_ajax_referer( 'cfef_dismiss_review_notice', 'nonce' );
+
+		update_option( $this->review_option, 'yes' );
 		echo json_encode( array( 'success' => 'true' ) );
 		exit;
 	}
@@ -87,14 +94,14 @@ class cfef_feedback {
 	function cfef_create_notice_content() {
 
 		$html = '
-		<div data-ajax-url="' . admin_url( 'admin-ajax.php' ) . '" data-ajax-callback="' . sanitize_text_field($this->plugin_slug). '_dismiss_notice" class="' . sanitize_text_field($this->plugin_slug) . '-review-notice-wrapper notice notice-info is-dismissible">
+		<div data-ajax-url="' . esc_url( admin_url( 'admin-ajax.php' ) ) . '" data-ajax-callback="' . esc_attr( sanitize_key( $this->plugin_slug ) . '_dismiss_notice' ) . '" data-nonce="' . esc_attr( wp_create_nonce( 'cfef_dismiss_review_notice' ) ) . '" class="' . esc_attr( sanitize_key( $this->plugin_slug ) . '-review-notice-wrapper notice notice-info is-dismissible' ) . '">
 			
 			<div class="message_container">
 				<p>Thanks for using <b>Conditional Fields for Elementor Form</b> WordPress plugin. We hope it meets your expectations!<br/>Please give us a quick rating, it works as a boost for us to keep working on more <a href="https://coolplugins.net" target="_blank"><strong>Cool Plugins</strong></a>!</p>
 				<ul>
 					<li><a href="' . esc_url( $this->review_link ) . '" class="rate-it-btn button button-primary" target="_blank" title="Submit A Review...">Rate Now! ★★★★★</a></li>
-					<li><a href="javascript:void(0);" class="already-rated-btn button button-secondary ' . sanitize_text_field($this->plugin_slug) . '_dismiss_notice" title="Already Rated - Close This Notice!">Already Rated</a></li>
-					<li><a href="javascript:void(0);" class="already-rated-btn button button-secondary ' . sanitize_text_field($this->plugin_slug) . '_dismiss_notice" title="Not Interested - Close This Notice!">Not Interested</a></li>
+					<li><a href="javascript:void(0);" class="already-rated-btn button button-secondary ' . esc_attr( sanitize_key( $this->plugin_slug ) . '_dismiss_notice' ) . '" title="Already Rated - Close This Notice!">Already Rated</a></li>
+					<li><a href="javascript:void(0);" class="already-rated-btn button button-secondary ' . esc_attr( sanitize_key( $this->plugin_slug ) . '_dismiss_notice' ) . '" title="Not Interested - Close This Notice!">Not Interested</a></li>
 				</ul>
 			</div>
 		</div>
@@ -296,8 +303,8 @@ class cfef_feedback {
 				array(
                     'timeout' => 30,
                         'body'    => array(
-                        'server_info' => serialize($this->cfef_get_user_info()['server_info']),
-                        'extra_details' => serialize($this->cfef_get_user_info()['extra_details']),
+                        'server_info' => wp_json_encode($this->cfef_get_user_info()['server_info']),
+                        'extra_details' => wp_json_encode($this->cfef_get_user_info()['extra_details']),
                         'plugin_initial'  => isset($plugin_initial) ? sanitize_text_field($plugin_initial) : 'N/A',
                         'plugin_version' => sanitize_text_field($this->plugin_version),
                         'plugin_name'    => sanitize_text_field($this->plugin_name),

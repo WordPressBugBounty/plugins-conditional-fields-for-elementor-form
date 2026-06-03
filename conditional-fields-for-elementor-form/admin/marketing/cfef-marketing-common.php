@@ -111,17 +111,29 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 
             if ( $screen && 'elementor_page_e-form-submissions' === $screen->id ) {
 
-                $button_text = __('Save To Google Sheet - Install Plugin','conditional-fields-for-elementor-form');
-				$nonce = wp_create_nonce('cfef_install_nonce');
-                
-                $custom_js = "
-                    jQuery(document).ready(function($) {
+                $button_text = __( 'Save To Google Sheet - Install Plugin', 'conditional-fields-for-elementor-form' );
+				$nonce       = wp_create_nonce( 'cfef_install_nonce' );
 
-                        var button = '<a data-nonce=\"{$nonce}\" data-plugin=\"form-db\" target=\"_blank\" class=\"button button-primary cfef-install-plugin\">{$button_text}</a>';
-                        $('#e-form-submissions .e-form-submissions-search').prepend(button);
+                $custom_js = sprintf(
+                    "
+                    jQuery(document).ready(function($) {
+                        var nonce = %s;
+                        var buttonText = %s;
+                        var \$button = $('<a>', {
+                            'data-nonce': nonce,
+                            'data-plugin': 'form-db',
+                            'target': '_blank',
+                            'class': 'button button-primary cfef-install-plugin',
+                            text: buttonText
+                        });
+                        $('#e-form-submissions .e-form-submissions-search').prepend(\$button);
                     });
-                ";
-                wp_add_inline_script('jquery-core', $custom_js);
+                    ",
+                    wp_json_encode( $nonce ),
+                    wp_json_encode( $button_text )
+                );
+
+                wp_add_inline_script( 'jquery-core', $custom_js );
             }
 		}
 
@@ -161,7 +173,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 		{
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( ! isset($_GET['page']) || $_GET['page'] !== 'e-form-submissions' ) {
+			if ( ! isset($_GET['page']) || sanitize_key(wp_unslash($_GET['page'])) !== 'e-form-submissions' ) {
 				return;
 			}	
 
@@ -312,9 +324,9 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 
 			// Check if it's tribe_events post type or tec settings page
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$is_tribe_post    = isset($_GET['post_type']) && sanitize_key($_GET['post_type']) === 'tribe_events';
+			$is_tribe_post    = isset($_GET['post_type']) && sanitize_key(wp_unslash($_GET['post_type'])) === 'tribe_events';
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$is_tec_settings  = isset($_GET['page']) && sanitize_key($_GET['page']) === 'tec-events-settings';
+			$is_tec_settings  = isset($_GET['page']) && sanitize_key(wp_unslash($_GET['page'])) === 'tec-events-settings';
 
 			// Only show notice if not on taxonomy screens
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -322,7 +334,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 
 				// If we're on tribe post and page param is set, require tec settings page specifically
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				if ($is_tribe_post && isset($_GET['page']) && sanitize_key($_GET['page']) !== 'tec-events-settings') {
+				if ($is_tribe_post && isset($_GET['page']) && sanitize_key(wp_unslash($_GET['page'])) !== 'tec-events-settings') {
 					return;
 				}
 				?>
@@ -506,7 +518,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 
 				$conditional_pro_plugin_file = 'conditional-fields-for-elementor-form-pro/class-conditional-fields-for-elementor-form-pro.php';
 
-				$pagenow        = isset($_POST['pagenow']) ? sanitize_key($_POST['pagenow']) : '';
+				$pagenow        = isset($_POST['pagenow']) ? sanitize_key(wp_unslash($_POST['pagenow'])) : '';
 				$network_wide = (is_multisite() && 'import' !== $pagenow);
 				$activation_result = activate_plugin($conditional_pro_plugin_file, '', $network_wide);
 
@@ -549,7 +561,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 					if ($skin->result->get_error_message() === 'Destination folder already exists.') {
 
 						$install_status = install_plugin_install_status($api);
-						$pagenow        = isset($_POST['pagenow']) ? sanitize_key($_POST['pagenow']) : '';
+						$pagenow        = isset($_POST['pagenow']) ? sanitize_key(wp_unslash($_POST['pagenow'])) : '';
 
 						if (current_user_can('activate_plugin', $install_status['file'])) {
 							$this->cfef_set_install_by_option( $plugin_slug );
@@ -591,7 +603,7 @@ if (! class_exists('CFEF_Marketing_Controllers')) {
 				}
 
 				$install_status = install_plugin_install_status($api);
-				$pagenow        = isset($_POST['pagenow']) ? sanitize_key($_POST['pagenow']) : '';
+				$pagenow        = isset($_POST['pagenow']) ? sanitize_key(wp_unslash($_POST['pagenow'])) : '';
 
 				$this->cfef_set_install_by_option( $plugin_slug );
 				// 🔄 Auto-activate the plugin right after successful install

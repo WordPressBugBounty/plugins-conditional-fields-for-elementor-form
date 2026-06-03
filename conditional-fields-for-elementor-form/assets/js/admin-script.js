@@ -151,9 +151,9 @@ function handleElementCardTooltip() {
 			// Toggle visibility
 			if (tooltip.style.display === 'block') {
 				tooltip.style.display = 'none';
-				let plugin_name = tooltip.textContent.replace('Activate Plugin', '');
+				const plugin_name = tooltip.textContent.replace('Activate Plugin', '').replace('Install Plugin', '');
 
-				tooltip.innerHTML = plugin_name; // Reset message
+				tooltip.textContent = plugin_name;
 			} else {
 				tooltip.style.display = 'block';
 
@@ -195,8 +195,8 @@ function handleElementCardTooltip() {
 		if (!e.target.closest('.cfkef-form-element-card')) {
 			document.querySelectorAll('.cfkef-tooltip').forEach(tip => {
 				tip.style.display = 'none';
-				tip_message  = tip.textContent.replace('Activate Plugin', '');
-				tip.innerHTML = tip_message;
+				const tip_message = tip.textContent.replace('Activate Plugin', '').replace('Install Plugin', '');
+				tip.textContent = tip_message;
 			});
 		}
 	});

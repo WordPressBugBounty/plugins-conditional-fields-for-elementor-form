@@ -273,10 +273,11 @@ class Create_Conditional_Fields {
 			if ( ! get_option( 'cfef_elementor_notice_dismiss' ) ) {
 				$review_nonce = wp_create_nonce( 'cfef_elementor_review' );
 				$url          = admin_url( 'admin-ajax.php' );
+				$review_url   = 'https://wordpress.org/support/plugin/conditional-fields-for-elementor-form/reviews/#new-post';
 				$html         = '<div class="cfef_elementor_review_wrapper">';
-				$html        .= '<div id="cfef_elementor_review_dismiss" data-url="' . esc_url( $url ) . '" data-nonce="' . esc_attr( $review_nonce ) . '">Close Notice X</div>
-								<div class="cfef_elementor_review_msg">' . __( 'Hope this addon solved your problem!','conditional-fields-for-elementor-form' ) . '<br><a href="https://wordpress.org/support/plugin/conditional-fields-for-elementor-form/reviews/#new-post" target="_blank"">Share the love with a ⭐⭐⭐⭐⭐ rating.</a><br><br></div>
-								<div class="cfef_elementor_demo_btn"><a href="https://wordpress.org/support/plugin/conditional-fields-for-elementor-form/reviews/#new-post" target="_blank">Submit Review</a></div>
+				$html        .= '<div id="cfef_elementor_review_dismiss" data-url="' . esc_url( $url ) . '" data-nonce="' . esc_attr( $review_nonce ) . '">' . esc_html__( 'Close Notice X', 'conditional-fields-for-elementor-form' ) . '</div>
+								<div class="cfef_elementor_review_msg">' . esc_html__( 'Hope this addon solved your problem!', 'conditional-fields-for-elementor-form' ) . '<br><a href="' . esc_url( $review_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Share the love with a ⭐⭐⭐⭐⭐ rating.', 'conditional-fields-for-elementor-form' ) . '</a><br><br></div>
+								<div class="cfef_elementor_demo_btn"><a href="' . esc_url( $review_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Submit Review', 'conditional-fields-for-elementor-form' ) . '</a></div>
 								</div>';
 
 				$field_controls['cfef_pro_image'] = array(
@@ -553,6 +554,15 @@ class Create_Conditional_Fields {
 		if ( ! check_ajax_referer( 'cfef_elementor_review', 'nonce', false ) ) {
 			wp_send_json_error( __( 'Invalid security token sent.','conditional-fields-for-elementor-form' ) );
 			wp_die( '0', 400 );
+		}
+
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'You do not have permission to do this.', 'conditional-fields-for-elementor-form' ),
+				),
+				403
+			);
 		}
 
 		if ( isset( $_POST['cfef_notice_dismiss'] ) && 'true' === sanitize_text_field(wp_unslash($_POST['cfef_notice_dismiss'])) ) {

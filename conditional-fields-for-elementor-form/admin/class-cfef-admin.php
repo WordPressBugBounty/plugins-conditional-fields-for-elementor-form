@@ -300,6 +300,9 @@ class CFEF_Admin {
      */
     public function display_plugin_admin_page() {
 
+        if ( ! current_user_can( 'manage_options' ) ) { 
+            return; 
+        }
 
         $form_mask_installed_date = get_option( 'fme-installDate' );
         $conditional_fields_installed_date = get_option( 'cfef-installDate' );

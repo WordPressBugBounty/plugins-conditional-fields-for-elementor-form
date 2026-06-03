@@ -213,34 +213,44 @@
         });
     }
 
-    if(typeof elementor !== 'undefined' && elementor) {
+    if (typeof elementor !== 'undefined' && elementor) {
 
-        const callbackfunction = elementor.modules.controls.BaseData.extend({
-            onRender:(data)=>{
-                if(!data.el) return;
+        $(window).on('elementor:init', function () {
+            const RawHtmlControl = elementor.getControlView('raw_html');
 
-                const customNotice=data.el.querySelector('.cool-form-wrp');
+            const CfefRawHtmlControl = RawHtmlControl.extend({
+                onRender() {
+                    RawHtmlControl.prototype.onRender.apply(this, arguments);
 
-                if(!customNotice) return;
+                    if (!this.el) {
+                        return;
+                    }
 
-                const installBtns=data.el.querySelectorAll('button.cfef-install-plugin');
+                    const customNotice = this.el.querySelector('.cool-form-wrp');
 
-                if(installBtns.length === 0) return;
+                    if (!customNotice) {
+                        return;
+                    }
 
-                installBtns.forEach(btn=>{
-                    const installSlug=btn.dataset.plugin;
-                    btn.addEventListener('click',()=>{
-                        installPlugin(jQuery(btn),installSlug)
+                    const installBtns = this.el.querySelectorAll('button.cfef-install-plugin');
+
+                    if (installBtns.length === 0) {
+                        return;
+                    }
+
+                    installBtns.forEach((btn) => {
+                        const installSlug = btn.dataset.plugin;
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            installPlugin(jQuery(btn), installSlug);
+                        });
                     });
-                });
-            },
-        });
+                },
+            });
 
-        // Initialize when Elementor is ready
-        $(window).on('elementor:init', function () { 
-            elementor.addControlView('raw_html', callbackfunction);
+            elementor.addControlView('raw_html', CfefRawHtmlControl);
         });
-    }else{
+    } else {
 
 
         $(document).ready(function ($) {

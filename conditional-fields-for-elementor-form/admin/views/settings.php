@@ -45,25 +45,6 @@ else if ( ! empty( $stored_oldest_plugin ) ) {
     update_option('oldest_plugin', $first_plugin);
 }
 
-function cfkef_block_sql_patterns($input) {
-    $sql_keywords = [
-        'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'UNION', 'OUTFILE', 'OR ', 'AND ', '--', '#', '/*', '*/'
-    ];
-
-    foreach ($sql_keywords as $keyword) {
-        if (stripos($input, $keyword) !== false) {
-            return ''; // If SQL pattern is detected, return an empty string
-        }
-    }
-
-    return $input;
-}
-
-function cfkef_sanitize_sql_input($input) {
-    $input = preg_replace('/[\'"=;#()\-]/', '', $input); // Remove SQL special characters
-    return cfkef_block_sql_patterns($input);
-}
-
 
 function cfef_handle_unchecked_checkbox() {
         $choice  = get_option('cpfm_opt_in_choice_cool_forms');
@@ -192,21 +173,46 @@ function cfef_handle_unchecked_checkbox() {
 }
 
 
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound	
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function handle_form_submit() {
 
     // Security check
     $pattern = "/(<script|<\/script>|onerror=|onload=|eval\(|javascript:|SELECT |INSERT |DELETE |DROP |UPDATE |UNION )/i";
 
+    $fields_to_validate = array(
+        'cfefp_cdn_image',
+        'cfefp_email_conditionally',
+        'cfefp_redirect_conditionally',
+        'cfkef_country_code_api_key',
+        'cfefp_cloudflare_site_key',
+        'cfefp_cloudflare_secret_key',
+        'cfefp_h_site_key',
+        'cfefp_h_secret_key',
+    );
+
+    foreach ( $fields_to_validate as $field ) {
+        if ( ! isset( $_POST[ $field ] ) ) {
+            continue;
+        }
+        if ( ! is_scalar( $_POST[ $field ] ) ) {
+            continue;
+        }
+        $value = sanitize_text_field( wp_unslash( (string) $_POST[ $field ] ) );
+        if ( preg_match( $pattern, $value ) ) {
+            return false;
+        }
+    }
 
     return true;
-
 
 }
 
 // Save API keys when the form is submitted
 if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 
+    if(! current_user_can( 'manage_options' ) ){
+        wp_die( esc_html__( 'You do not have permission to do this.', 'conditional-fields-for-elementor-form' ), 403 );
+    }
 
     check_admin_referer('cool_formkit_save_api_keys', 'cool_formkit_nonce');
 

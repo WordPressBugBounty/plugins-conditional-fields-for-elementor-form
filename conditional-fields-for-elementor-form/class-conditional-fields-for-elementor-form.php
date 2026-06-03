@@ -3,14 +3,15 @@
  * Plugin Name: Conditional Fields for Elementor Form
  * Plugin URI:https://coolplugins.net/
  * Description: The Conditional Fields for Elementor plugin add-on used to show and hide form fields based on conditional input values.
- * Version: 1.6.5
+ * Version: 1.7.0
  * Author:  Cool Plugins
  * Author URI: https://coolplugins.net/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
  * License:GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:conditional-fields-for-elementor-form
- * Elementor tested up to:  4.0.0
- * Elementor Pro tested up to:  4.0.0
+ * Requires Plugins: elementor
+ * Elementor tested up to:  4.1.1
+ * Elementor Pro tested up to:  4.1.0
  *
  * @package cfef
  */
@@ -21,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 if ( ! defined( 'CFEF_VERSION' ) ) {
-	define( 'CFEF_VERSION', '1.6.5' );
+	define( 'CFEF_VERSION', '1.7.0' );
 }
 /*** Defined constent for later use */
 define( 'CFEF_FILE', __FILE__ );
@@ -29,6 +30,8 @@ define( 'CFEF_PLUGIN_BASE', plugin_basename( CFEF_FILE ) );
 define( 'CFEF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'CFEF_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define('CFEF_FEEDBACK_URL', 'https://feedback.coolplugins.net/');
+define('CFEF_MIN_ELEMENTOR_ATOMIC_FORM_VERSION', '4.0');
+
 
 
 if ( ! function_exists( 'is_plugin_active' ) ) {
@@ -157,6 +160,15 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 				include CFEF_PLUGIN_DIR . 'includes/class-create-conditional-fields.php';
 				include CFEF_PLUGIN_DIR . 'includes/class-conditional-fields-submit-button.php';
 				new Conditional_Submit_Button();
+
+				if ( is_plugin_active( 'elementor-pro/elementor-pro.php' ) || is_plugin_active( 'pro-elements/pro-elements.php' ) ) {
+					// After `elementor/init`, core services (e.g. experiments) are initialized; on `elementor/loaded` they are often still null.
+					if ( did_action( 'elementor/init' ) ) {
+						$this->load_atomic_form_addon();
+					} else {
+						add_action( 'elementor/init', array( $this, 'load_atomic_form_addon' ), 20 );
+					}
+				}
 			}
 
 			if ( is_admin() ) {
@@ -164,11 +176,87 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 			}
 		}
 
+		public function load_atomic_form_addon() {
+			if ( ! is_plugin_active( 'elementor-pro/elementor-pro.php' ) && ! is_plugin_active( 'pro-elements/pro-elements.php' ) ) {
+				return;
+			}
+	
+			if ( ! did_action( 'elementor/init' ) || ! class_exists( '\Elementor\Plugin' ) ) {
+				return;
+			}
+
+			if ( ! self::is_elementor_atomic_form_supported() ) {
+				if ( is_admin() && current_user_can( 'activate_plugins' ) ) {
+					add_action( 'admin_notices', array( $this, 'admin_notice_elementor_atomic_form_version' ) );
+				}
+				return;
+			}
+	
+			$elementor = \Elementor\Plugin::$instance;
+			if ( ! $elementor ) {
+				return;
+			}
+	
+			$experiments = isset( $elementor->experiments ) ? $elementor->experiments : null;
+			if ( ! self::are_elementor_atomic_form_experiments_active( $experiments ) ) {
+				return;
+			}
+
+			include CFEF_PLUGIN_DIR . 'includes/atomic-form-addon-loader.php';
+			new \Cool_FormKit\Includes\Atomic_Form_Addon_Loader();
+		}
+
+		/**
+		 * Atomic Form extensions require Elementor 4.0+ (matches Elementor Pro atomic-form module).
+		 */
+		public static function is_elementor_atomic_form_supported(): bool {
+			return defined( 'ELEMENTOR_VERSION' )
+				&& version_compare( ELEMENTOR_VERSION, CFEF_MIN_ELEMENTOR_ATOMIC_FORM_VERSION, '>=' );
+		}
+
+		private static function are_elementor_atomic_form_experiments_active( $experiments ): bool {
+
+			if ( ! self::is_elementor_atomic_form_supported() ) {
+				return false;
+			}
+
+			if ( ! $experiments || ! is_object( $experiments ) || ! method_exists( $experiments, 'is_feature_active' ) ) {
+				return false;
+			}
+
+			return $experiments->is_feature_active( 'e_atomic_elements' )
+				&& $experiments->is_feature_active( 'e_pro_atomic_form' );
+		}
+
 		public function Cfef_pro_plugin_demo_link($links){
 			$get_pro_link = '<a href="https://coolplugins.net/product/conditional-fields-for-elementor-form/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=plugins_list#pricing" style="font-weight: bold; color: green;" target="_blank">Get Pro</a>';
 			array_unshift( $links, $get_pro_link );
 			return $links;
 		}
+
+		public function admin_notice_elementor_atomic_form_version() {
+			if ( ! current_user_can( 'update_plugins' ) ) {
+				return;
+			}
+	
+			$file_path = 'elementor/elementor.php';
+			$upgrade_link = wp_nonce_url(
+				self_admin_url( 'update.php?action=upgrade-plugin&plugin=' ) . $file_path,
+				'upgrade-plugin_' . $file_path
+			);
+	
+			printf(
+				'<div class="notice notice-warning is-dismissible"><p><strong>%1$s</strong> %2$s <a href="%3$s">%4$s</a></p></div>',
+				esc_html__( 'Conditional Fields for Elementor Form:', 'conditional-fields-for-elementor-form' ),
+				esc_html__(
+					'Atomic Form extensions require Elementor 4.0 or newer. Update Elementor to use this feature.',
+					'conditional-fields-for-elementor-form'
+				),
+				esc_url( $upgrade_link ),
+				esc_html__( 'Update Elementor', 'conditional-fields-for-elementor-form' )
+			);
+		}
+	
 
 		public function Cfef_plugin_redirection($plugin){
 			if ( ! is_plugin_active( 'elementor-pro/elementor-pro.php' ) && ! is_plugin_active( 'pro-elements/pro-elements.php' ) ) {

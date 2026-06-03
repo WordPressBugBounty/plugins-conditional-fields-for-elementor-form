@@ -78,7 +78,7 @@ class CPFM_Feedback_Notice {
  
         $screen         = get_current_screen();
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $current_page   = isset($_GET['page'])? sanitize_key($_GET['page']):'';
+        $current_page   = isset($_GET['page'])? sanitize_key(wp_unslash($_GET['page'])):'';
     
         // Gather all unique pages from registered notices
         $allowed_pages = [];
@@ -178,7 +178,7 @@ class CPFM_Feedback_Notice {
 
         $screen         = get_current_screen();
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $current_page   = isset($_GET['page']) ? sanitize_key($_GET['page']) : '';
+        $current_page   = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
 
        
         $unread_count   = 0;
@@ -227,7 +227,7 @@ class CPFM_Feedback_Notice {
             $output .= '<p>' . esc_html__('Opt in to receive email updates about security improvements, new features, helpful tutorials, and occasional special offers. We\'ll collect:','conditional-fields-for-elementor-form') . '</p>';
             $output .= '<ul>';
             $output .= '<li>' . esc_html__('Your website home URL and WordPress admin email.','conditional-fields-for-elementor-form') . '</li>';
-            $output .= '<li>' . esc_html__('To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.','conditional-fields-for-elementor-form') . '</li>';
+            $output .= '<li>' . esc_html__('To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.','conditional-fields-for-elementor-form') . '<a href="https://my.coolplugins.net/terms/usage-tracking/" target="_blank">' . esc_html__('Click Here', 'conditional-fields-for-elementor-form') . '</a></li>';
             $output .= '</ul>';
             
             $output .= '</div>';
