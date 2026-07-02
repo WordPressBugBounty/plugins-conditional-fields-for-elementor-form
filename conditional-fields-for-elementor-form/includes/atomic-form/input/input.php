@@ -19,6 +19,10 @@ if (! defined('ABSPATH')) exit;
 
 require_once CFEF_PLUGIN_DIR . 'includes/atomic-form/field-controls-definition/conditional-input-definition.php';
 
+if ( ! class_exists( AtomicFormInput::class ) ) {
+	return;
+}
+
 class Input extends AtomicFormInput
 {
     use Has_Template;

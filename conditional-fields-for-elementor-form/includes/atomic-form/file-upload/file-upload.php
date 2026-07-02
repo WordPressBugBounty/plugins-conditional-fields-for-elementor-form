@@ -29,6 +29,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once CFEF_PLUGIN_DIR . 'includes/atomic-form/field-controls-definition/conditional-input-definition.php';
 
+if ( ! class_exists( AtomicFormFileUpload::class ) ) {
+	return;
+}
+
 class File_Upload extends AtomicFormFileUpload {
 	use Has_Template;
 
