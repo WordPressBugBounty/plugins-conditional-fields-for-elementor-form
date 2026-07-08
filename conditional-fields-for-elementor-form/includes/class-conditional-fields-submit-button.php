@@ -10,8 +10,6 @@ use Elementor\Controls_Manager;
 
 class Conditional_Submit_Button{
 
-    private $validate_form = false;
-
     public function __construct(){
         add_action( 'elementor/element/form/section_buttons/after_section_start', array($this,'inject_custom_control_inside_section_buttons'), 10, 2 );
     }

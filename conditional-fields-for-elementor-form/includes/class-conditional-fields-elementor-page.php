@@ -150,7 +150,7 @@ class Conditional_Fields_Elementor_Page {
 
         if (!is_plugin_active( 'extensions-for-elementor-form/extensions-for-elementor-form.php' )) {
             require_once CFEF_PLUGIN_DIR . 'admin/class-cfef-admin.php';
-            $plugin_admin = CFEF_Admin::get_instance($this->get_plugin_name(), $this->get_version());
+            CFEF_Admin::get_instance($this->get_plugin_name(), $this->get_version());
 		}
 
 

@@ -134,44 +134,8 @@ class Conditional_Email_Action extends Conditional_Email_Action_Base {
             if ($this->hello_plus_active) {
                 \HelloPlus\Modules\Forms\Actions\Email::run($record, $ajax_handler);
             }
-        } elseif ($this->platform === 'elementor') {
-            parent::run($record, $ajax_handler);
-        } elseif ($this->platform === 'hello_plus') {
+        } else {
             parent::run($record, $ajax_handler);
         }
-    }
-}
-
-class Conditional_Email_Action_Two extends Conditional_Email_Action {
-
-    /**
-     * Get action name.
-     *
-     * @access public
-     * @return string
-     */
-    public function get_name() {
-        return 'conditional_email_action_two';
-    }
-
-    /**
-     * Get action label.
-     *
-     * @access public
-     * @return string
-     */
-    public function get_label() {
-        return esc_html__('Email Conditionally 2 (Pro)','conditional-fields-for-elementor-form');
-    }
-    
-    /**
-     * Get action Controller ID.
-     *
-     * @access public
-     * @param string $control_id
-     * @return string
-     */
-    public function controler_id($control_id) {
-        return $control_id . '_cfef_email_action_two';
     }
 }

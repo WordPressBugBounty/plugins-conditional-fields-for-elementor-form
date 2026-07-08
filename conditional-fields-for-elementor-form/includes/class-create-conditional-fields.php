@@ -517,7 +517,7 @@ class Create_Conditional_Fields {
 						}
 						$operator              = $logic_values['cfef_logic_field_is'];
 						$value                 = $logic_values['cfef_logic_compare_value'];
-						$condition_pass_fail[] = $this->cfef_check_field_logic( $value_id, $operator, $value, $display_mode );
+						$condition_pass_fail[] = $this->cfef_check_field_logic( $value_id, $operator, $value );
 					}
 					$action_type = ( 'All' === $fire_action ) ? array_reduce(
 						$condition_pass_fail,

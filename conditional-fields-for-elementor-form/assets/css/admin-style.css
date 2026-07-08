@@ -1,3 +1,13 @@
+:root {
+  --cfk-navy: #323348;
+  --cfk-slate: #3f415e;
+  --cfk-pink: #fb5fab;
+  --cfk-pink-hover: #e8338a;
+  --cfk-pink-hover-border: #ff57a8;
+  --cfk-pink-hover-shadow: #f0398d;
+  --cfk-white: #fff;
+}
+
 /* Submit Button */
 .cfkef-submit-button {
   display: flex;
@@ -78,7 +88,7 @@
 }
 
 input:checked + .cfkef-slider {
-  background-color: #fb5fab;
+  background-color: var(--cfk-pink);
 }
 
 input:checked + .cfkef-slider::before {
@@ -112,8 +122,8 @@ input.cfkef-element-toggle:disabled::before {
 }
 
 .cfkef-wrapper h2.nav-tab-wrapper .nav-tab-active {
-  background-color: #fff;
-  border-bottom-color: #fff;
+  background-color: var(--cfk-white);
+  border-bottom-color: var(--cfk-white);
 }
 
 /* For container wrapping label and optional text */
@@ -180,10 +190,11 @@ input.cfkef-element-toggle:disabled::before {
 
 .cfkef-license-box {
   margin: 25px 0;
-  background: #fff;
+  background: var(--cfk-white);
   border: 1px solid #ddd;
   border-radius: 8px;
   max-width: 660px;
+  width: 50%;
   box-shadow: 0px 2px 2px rgb(150 150 150 / 12%);
   display: flex;
   justify-content: space-between;
@@ -198,7 +209,7 @@ input.cfkef-element-toggle:disabled::before {
 .cfkef-form-element-wrapper .wrapper-header,
 .cfk-box .wrapper-header {
   padding: 1px 20px;
-  background-color: #3f415e;
+  background-color: var(--cfk-slate);
   border-radius: 5px 5px 0px 0px;
 }
 
@@ -337,7 +348,7 @@ input.cfkef-element-toggle:disabled::before {
 
 
 .cfkef-form-element-card {
-  background: #fff;
+  background: var(--cfk-white);
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 20px;
@@ -583,8 +594,8 @@ a.cfk-box.review:before {
 .cfkef-label-updated {
   font-size: 10px;
   text-transform: uppercase;
-  color: #fff;
-  background-color: #fb5fab;
+  color: var(--cfk-white);
+  background-color: var(--cfk-pink);
   padding: 2px 6px;
   border-radius: 4px;
   position: absolute;
@@ -602,7 +613,7 @@ a.cfk-box.review:before {
 }
 
 .cfkef-label-updated {
-  background-color: #3f415e;
+  background-color: var(--cfk-slate);
 }
 
 .cfkef-wrapper {
@@ -618,7 +629,7 @@ a.cfk-box.review:before {
 
 body.elementor_page_cool-formkit,
 body.elementor_page_cfkef-entries {
-  background-color: #fff;
+  background-color: var(--cfk-white);
 }
 
 .elementor_page_cool-formkit #wpbody #wpbody-content {
@@ -636,24 +647,24 @@ body.elementor_page_cfkef-entries {
 
 .cfkef-wrapper .button {
   padding: 10px 14px;
-  background-color: #3f415e;
-  border: 1px solid #323348;
+  background-color: var(--cfk-slate);
+  border: 1px solid var(--cfk-navy);
   box-shadow: 1px 2px 6px -4px rgba(56, 60, 96, 0.977);
-  color: #ffffff;
+  color: var(--cfk-white);
   font-weight: 500;
   text-decoration: none;
   border-radius: 5px;
   font-size: 14px;
   line-height: 14px;
   align-self: center;
-  text-shadow: 1px 1px 1px #323348;
+  text-shadow: 1px 1px 1px var(--cfk-navy);
 }
 .cfkef-wrapper .button:focus {
-  box-shadow: 0 0 2px 2px #323348;
+  box-shadow: 0 0 2px 2px var(--cfk-navy);
   outline: none;
-  border: 1px solid #323348;
+  border: 1px solid var(--cfk-navy);
   background: #0e1136;
-  color: #fff;
+  color: var(--cfk-white);
   text-shadow: none;
 }
 .cfkef-wrapper .button-secondary {
@@ -661,25 +672,25 @@ body.elementor_page_cfkef-entries {
   border: 1px solid #ccc;
   color: #595959;
   box-shadow: 1px 3px 4px -5px rgb(55 55 55 / 42%);
-  text-shadow: 1px 1px 1px #ffffff;
+  text-shadow: 1px 1px 1px var(--cfk-white);
 }
 .cfkef-wrapper .button:hover {
   box-shadow: 1px 2px 6px -4px rgb(30, 31, 48);
-  border: 1px solid #323348;
+  border: 1px solid var(--cfk-navy);
   background: #0e1136;
-  color: #fff;
+  color: var(--cfk-white);
   text-shadow: none;
 }
 .wrapper-header .cfkef-save-all .cfkef-save-controls .button {
-  background-color: #fb5fab;
+  background-color: var(--cfk-pink);
   border: 1px solid #fd79b9;
   text-shadow: 1px 1px 1px #fc63ad;
 }
 .wrapper-header .cfkef-save-all .cfkef-save-controls .button:hover,
 .wrapper-header .cfkef-save-all .cfkef-save-controls .button:focus {
-  background-color: #e8338a;
-  border-color: #ff57a8;
-  text-shadow: 1px 1px 1px #f0398d;
+  background-color: var(--cfk-pink-hover);
+  border-color: var(--cfk-pink-hover-border);
+  text-shadow: 1px 1px 1px var(--cfk-pink-hover-shadow);
 }
 .wrapper-header .cfkef-save-all .cfkef-save-controls .button:focus {
   box-shadow: 0 0 4px 2px #f0cedf;
@@ -701,7 +712,7 @@ body.elementor_page_cfkef-entries {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
+  background-color: var(--cfk-white);
   padding: 10px 30px;
   border-bottom: 1px solid #ddd;
   height: 60px;
@@ -722,15 +733,15 @@ body.elementor_page_cfkef-entries {
   border: 1px solid #dcd0d6;
 }
 .cfkef-header-logo .button {
-  background-color: #fb5fab;
+  background-color: var(--cfk-pink);
   border: 1px solid #fd79b9;
   text-shadow: 1px 1px 1px #fc63ad;
 }
 .cfkef-header-logo .button:hover,
 .cfkef-header-logo .button:focus {
-  background-color: #e8338a;
-  border-color: #ff57a8;
-  text-shadow: 1px 1px 1px #f0398d;
+  background-color: var(--cfk-pink-hover);
+  border-color: var(--cfk-pink-hover-border);
+  text-shadow: 1px 1px 1px var(--cfk-pink-hover-shadow);
 }
 .cfkef-header-logo .button:focus {
   box-shadow: 0 0 4px 2px #f0cedf;
@@ -772,7 +783,7 @@ a.button-primary.upgrade-pro-btn {
 }
 
 .cfkef-sidebar-block {
-  background: #fff;
+  background: var(--cfk-white);
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 20px;
@@ -843,7 +854,7 @@ a.button-primary.upgrade-pro-btn {
 
 /* Review Request Styles */
 .cfkef-review-request {
-  background: #fff;
+  background: var(--cfk-white);
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 20px;
@@ -886,10 +897,9 @@ a.button-primary.upgrade-pro-btn {
 }
 
 /* Settings Page */
-.cfkef-license-box,
 .cfkef-settings-box {
   margin: 25px 0;
-  background: #fff;
+  background: var(--cfk-white);
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0px 2px 2px rgb(150 150 150 / 12%);
@@ -907,16 +917,12 @@ span.cfkef-pro-feature a {
 }
 
 /* License Page */
-.cfkef-license-box {
-  width: 50%;
-}
-
 .cfkef-license-upgrade-box {
   background-color: #fff6f7;
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;
-  border-left: 4px solid #fb5fab;
+  border-left: 4px solid var(--cfk-pink);
 }
 .cfkef-license-upgrade-box a {
   color: #0073aa;
@@ -952,7 +958,7 @@ span.cfkef-pro-feature a {
 }
 
 .cfk-box {
-  background: #fff;
+  background: var(--cfk-white);
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0px 2px 2px rgb(150 150 150 / 12%);
@@ -1109,7 +1115,7 @@ span.cfkef-pro-feature a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
+  background-color: var(--cfk-white);
   padding: 10px 30px;
   border-bottom: 1px solid #ddd;
   height: 60px;
@@ -1142,7 +1148,7 @@ span.cfkef-pro-feature a {
 }
 
 .cfk-header-logo .button {
-  background-color: #fb5fab;
+  background-color: var(--cfk-pink);
   border: 1px solid #fd79b9;
   text-shadow: 1px 1px 1px #fc63ad;
 }
@@ -1151,14 +1157,6 @@ span.cfkef-pro-feature a {
   display: flex;
   gap: 15px;
 }
-
-a.button-primary.upgrade-pro-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-}
-
 
 .cfk-wrapper * {
   box-sizing: border-box;
@@ -1176,25 +1174,25 @@ a.button-primary.upgrade-pro-btn {
 
 .cfk-wrapper .button {
   padding: 10px 14px;
-  background-color: #3f415e;
-  border: 1px solid #323348;
+  background-color: var(--cfk-slate);
+  border: 1px solid var(--cfk-navy);
   box-shadow: 1px 2px 6px -4px rgba(56, 60, 96, 0.977);
-  color: #ffffff;
+  color: var(--cfk-white);
   font-weight: 500;
   text-decoration: none;
   border-radius: 5px;
   font-size: 14px;
   line-height: 14px;
   align-self: center;
-  text-shadow: 1px 1px 1px #323348;
+  text-shadow: 1px 1px 1px var(--cfk-navy);
 }
 
 .cfk-wrapper .button:focus {
-  box-shadow: 0 0 2px 2px #323348;
+  box-shadow: 0 0 2px 2px var(--cfk-navy);
   outline: none;
-  border: 1px solid #323348;
+  border: 1px solid var(--cfk-navy);
   background: #0e1136;
-  color: #fff;
+  color: var(--cfk-white);
   text-shadow: none;
 }
 
@@ -1203,14 +1201,14 @@ a.button-primary.upgrade-pro-btn {
   border: 1px solid #ccc;
   color: #595959;
   box-shadow: 1px 3px 4px -5px rgb(55 55 55 / 42%);
-  text-shadow: 1px 1px 1px #ffffff;
+  text-shadow: 1px 1px 1px var(--cfk-white);
 }
 
 .cfk-wrapper .button:hover {
   box-shadow: 1px 2px 6px -4px rgb(30, 31, 48);
-  border: 1px solid #323348;
+  border: 1px solid var(--cfk-navy);
   background: #0e1136;
-  color: #fff;
+  color: var(--cfk-white);
   text-shadow: none;
 }
 
@@ -1311,8 +1309,8 @@ td.cool-formkit-table-td.usage-share-data {
   top: -10px;
   right: 0px;
   transform: translateY(-100%);
-  background: #3f415e;
-  color: #fff;
+  background: var(--cfk-slate);
+  color: var(--cfk-white);
   padding: 10px;
   font-size: 12px;
   border-radius: 4px;
@@ -1333,7 +1331,7 @@ td.cool-formkit-table-td.usage-share-data {
   right: 15px;
   border-width: 6px;
   border-style: solid;
-  border-color: #3f415e transparent transparent transparent;
+  border-color: var(--cfk-slate) transparent transparent transparent;
 }
 
 /* Shake Effect On save buttons*/
@@ -1366,7 +1364,7 @@ td.cool-formkit-table-td.usage-share-data {
 .cfkef-activate-plugin-btn,
 .cfkef-install-plugin-btn {
   cursor: pointer;
-  background-color: #fb5fab;
+  background-color: var(--cfk-pink);
   color: white;
   border: none;
   padding: 5px 3px;

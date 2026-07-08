@@ -19,20 +19,6 @@
   padding: 10px; border:
   2px solid #EDACFB;
 }
-.cfef_elementor_review_notice .cfef_elementor_offer_notice{
-  position: absolute;
-  top: -11px;
-  left: 16px;
-  background: #EDACFB;
-  color: #0C0D0E;
-  font-size: 10px;
-  padding: 5px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-.cfef_elementor_review_notice .cfef_elementor_offer_notice a{
-  color: #0C0D0E;
-}
 .cfef_elementor_review_notice #cfef_elementor_review_dismiss{
   position: absolute;
   bottom: 4px;
@@ -79,10 +65,4 @@
 }
 .cfef_pro_link_button a:hover{
   color: black;
-}
-.elementor-control-raw-html.get_ccfef_link {
-  font-size: 11px;
-  font-style: italic;
-  line-height: 1.4;
-  color: var(--e-a-color-txt-muted);
 }

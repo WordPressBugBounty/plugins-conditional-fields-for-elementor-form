@@ -67,14 +67,14 @@ class Input extends AtomicFormInput
 			$schema = array_merge( $schema, Conditional_Input_Definition::props_schema() );
 		}
 
-		if ( self::is_mask_addon_active() ) {
+		if ( self::is_addon_active( \Mask_Form_Elementor\Includes\AtomicForm\Input\Mask_Input_Definition::class ) ) {
 			$schema = array_merge(
 				$schema,
 				\Mask_Form_Elementor\Includes\AtomicForm\Input\Mask_Input_Definition::props_schema()
 			);
 		}
 
-		if ( self::is_fme_addon_active() ) {
+		if ( self::is_addon_active( \FME\Includes\AtomicForm\Input\Mask_Input_Definition::class ) ) {
 			$schema = array_merge(
 				$schema,
 				\FME\Includes\AtomicForm\Input\Mask_Input_Definition::props_schema()
@@ -120,8 +120,8 @@ class Input extends AtomicFormInput
 				Switch_Control::bind_to( 'readonly' )
 					->set_label( __( 'Read only', 'conditional-fields-for-elementor-form' ) ),
 			],
-			self::is_mask_addon_active() ? \Mask_Form_Elementor\Includes\AtomicForm\Input\Mask_Input_Definition::content_controls() : [],
-			self::is_fme_addon_active() ? \FME\Includes\AtomicForm\Input\Mask_Input_Definition::content_controls() : []
+			self::is_addon_active( \Mask_Form_Elementor\Includes\AtomicForm\Input\Mask_Input_Definition::class ) ? \Mask_Form_Elementor\Includes\AtomicForm\Input\Mask_Input_Definition::content_controls() : [],
+			self::is_addon_active( \FME\Includes\AtomicForm\Input\Mask_Input_Definition::class ) ? \FME\Includes\AtomicForm\Input\Mask_Input_Definition::content_controls() : []
 		);
 
 		$sections = [
@@ -150,22 +150,11 @@ class Input extends AtomicFormInput
 	}
 
 	/**
-	 * Mask Form Elementor atomic input extension (cfkef_enabled_elements: form_input_mask).
+	 * Atomic input mask extension when the addon class exists and form_input_mask is enabled.
 	 *
-	 * @see \Mask_Form_Elementor\Includes\AtomicForm\Input\Mask_Input_Definition
+	 * @param string $class Addon definition class name.
 	 */
-	private static function is_mask_addon_active(): bool {
-		$class = \Mask_Form_Elementor\Includes\AtomicForm\Input\Mask_Input_Definition::class;
-		return class_exists( $class ) && self::is_cfkef_element_enabled( 'form_input_mask' );
-	}
-
-	/**
-	 * FME atomic input extension (cfkef_enabled_elements: form_input_mask).
-	 *
-	 * @see \FME\Includes\AtomicForm\Input\Mask_Input_Definition
-	 */
-	private static function is_fme_addon_active(): bool {
-		$class = \FME\Includes\AtomicForm\Input\Mask_Input_Definition::class;
+	private static function is_addon_active( string $class ): bool {
 		return class_exists( $class ) && self::is_cfkef_element_enabled( 'form_input_mask' );
 	}
 

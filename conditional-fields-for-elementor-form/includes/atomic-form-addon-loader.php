@@ -17,19 +17,9 @@ use Cool_FormKit\Includes\AtomicForm\Handle_Atomic_Form_Submission;
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 class Atomic_Form_Addon_Loader {
 
-
-    private static $instance = null;
-
     protected $version;
 
     protected $error_map;
-
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
 
     public function __construct() {
 
@@ -248,9 +238,5 @@ class Atomic_Form_Addon_Loader {
 
             $this->register_atomic_form_condition_script();
         }
-    }
-
-    public function get_version() {
-        return $this->version;
     }
 }

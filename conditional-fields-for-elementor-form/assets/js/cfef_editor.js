@@ -71,14 +71,13 @@
                 if (matches.index === regexPattren.lastIndex) {
                     regexPattren.lastIndex++;
                 }
-                matches.forEach((match, groupIndex) => {
+                matches.forEach((match) => {
                     fieldName = match.replaceAll('"', "");
                 });
             }
             $(this).data("actual-id", fieldName);
 
             idList += '<li title="Field ID" data-field-id="' + fieldName + '">' + fieldName + '</li>';
-            //  idList +='<li title="Field ID">'+fieldName+'</li>'; 
            });
           idList +='</ul>';
           $(this).closest(".elementor-control-input-wrapper").append(idList);
@@ -125,11 +124,6 @@
                 },
                 success: (response) => {
                     btn.closest('.elementor-control').remove();
-                },
-                error: (xhr, status, error) => {
-                    console.log(xhr.responseText);
-                    console.log(error);
-                    console.log(status);
                 }
             });
         });

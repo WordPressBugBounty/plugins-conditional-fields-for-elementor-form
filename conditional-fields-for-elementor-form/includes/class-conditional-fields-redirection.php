@@ -15,17 +15,7 @@ $has_hello_plus = class_exists('HelloPlus\Modules\Forms\Actions\Redirect');
 
 if ($has_elementor || $has_hello_plus) {
     // Create base class that extends the appropriate platform class
-    if ($has_elementor && $has_hello_plus) {
-        // If both platforms exist, extend Elementor Pro by default
-        class Conditional_Fields_Redirection_Base extends \ElementorPro\Modules\Forms\actions\Redirect {
-            protected $platform = 'elementor';
-            
-            protected function get_controls_manager() {
-                return \Elementor\Controls_Manager::class;
-            }
-        }
-    } elseif ($has_elementor) {
-        // Elementor Pro only
+    if ($has_elementor) {
         class Conditional_Fields_Redirection_Base extends \ElementorPro\Modules\Forms\actions\Redirect {
             protected $platform = 'elementor';
             
@@ -144,39 +134,5 @@ class Conditional_Fields_Redirection extends Conditional_Fields_Redirection_Base
      */
     public function run($record, $ajax_handler) {
         parent::run($record, $ajax_handler);
-    }
-}
-
-class Conditional_Fields_Redirection_Two extends Conditional_Fields_Redirection {
-
-    /**
-     * Get action name.
-     *
-     * @access public
-     * @return string
-     */
-    public function get_name() {
-        return 'conditional_fields_redirection_two';
-    }
-
-    /**
-     * Get action label.
-     *
-     * @access public
-     * @return string
-     */
-    public function get_label() {
-        return esc_html__('Redirect Conditionally 2 (Pro)','conditional-fields-for-elementor-form');
-    }
-    
-    /**
-     * Get action Controller ID.
-     *
-     * @access public
-     * @param string $control_id
-     * @return string
-     */
-    public function controler_id($control_id) {
-        return $control_id . '_cfef_conditional_fields_two';
     }
 }

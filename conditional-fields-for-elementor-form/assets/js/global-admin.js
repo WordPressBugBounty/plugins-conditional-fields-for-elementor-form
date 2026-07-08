@@ -27,7 +27,5 @@ jQuery(document).ready(function () {
 
     addCoolformAdmingPageToElementor();
 
-    document.addEventListener('cfkef_dashboard_toggle:settings:changed', function (e) {
-        addCoolformAdmingPageToElementor()
-    });
+    document.addEventListener('cfkef_dashboard_toggle:settings:changed', addCoolformAdmingPageToElementor);
 });

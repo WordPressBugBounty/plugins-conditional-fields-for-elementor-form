@@ -120,6 +120,32 @@ class CFEF_Admin {
     }
 
     /**
+     * Enable a form element on first run, or migrate from a legacy option.
+     *
+     * @param string $init_flag      Option flag set after first-time initialization.
+     * @param string $migrate_flag   Option flag set after legacy migration runs once.
+     * @param string $legacy_option  Legacy option key to read during migration.
+     * @param string $element_slug   Element slug for cfkef_enabled_elements.
+     */
+    private function maybe_migrate_element( $init_flag, $migrate_flag, $legacy_option, $element_slug ) {
+        if ( ! get_option( $init_flag ) ) {
+            $this->add_to_cfkef_enabled_elements( array( $element_slug ) );
+            update_option( $init_flag, true );
+            return;
+        }
+
+        if ( ! get_option( $migrate_flag ) ) {
+            $val = get_option( $legacy_option, null );
+
+            if ( ! is_null( $val ) && $val ) {
+                $this->add_to_cfkef_enabled_elements( array( $element_slug ) );
+            }
+
+            update_option( $migrate_flag, true );
+        }
+    }
+
+    /**
      * Get the instance of this class.
      *
      * @since    1.0.0
@@ -410,69 +436,9 @@ class CFEF_Admin {
         // phpcs:ignore PluginCheck.CodeAnalysis.SettingSanitization.register_settingMissing
         register_setting( 'cfkef_form_elements_group', 'cfkef_enable_elementor_pro_form' );
 
-        if (!get_option('cfef_plugin_initialized')) {
-            // Get current enabled elements or empty array
-            $this->add_to_cfkef_enabled_elements( ['conditional_logic'] );
-            // Set initialization flag to avoid repeating
-            update_option('cfef_plugin_initialized', true);
-            
-        }
-        else {
-
-            if ( ! get_option( 'cfef_migrate_done' ) ) {
-
-                $val = get_option( 'condtional_logic', null );
-
-                if ( ! is_null( $val ) && $val ) {
-                    // Option exists AND is true
-                    $this->add_to_cfkef_enabled_elements( ['conditional_logic'] );
-                }
-
-                update_option( 'cfef_migrate_done', true );
-            }
-        }
-
-        if ( ! get_option( 'ccfef_plugin_initialized' ) ) {
-
-            $this->add_to_cfkef_enabled_elements( ['country_code'] );
-
-            update_option( 'ccfef_plugin_initialized', true );
-
-        } else {
-
-            if ( ! get_option( 'ccfef_migrate_done' ) ) {
-
-                $val = get_option( 'country_code', null );
-
-                if ( ! is_null( $val ) && $val ) {
-                    // Option exists AND is true
-                    $this->add_to_cfkef_enabled_elements( ['country_code'] );
-                }
-
-                update_option( 'ccfef_migrate_done', true );
-            }
-        }
-
-        if ( ! get_option( 'fme_plugin_initialized' ) ) {
-
-            $this->add_to_cfkef_enabled_elements( ['form_input_mask'] );
-
-            update_option( 'fme_plugin_initialized', true );
-
-        } else {
-
-            if ( ! get_option( 'fme_migrate_done' ) ) {
-
-                $val = get_option( 'form_input_mask', null );
-
-                if ( ! is_null( $val ) && $val ) {
-                    // Option exists AND is true
-                    $this->add_to_cfkef_enabled_elements( ['form_input_mask'] );
-                }
-
-                update_option( 'fme_migrate_done', true );
-            }
-        }
+        $this->maybe_migrate_element( 'cfef_plugin_initialized', 'cfef_migrate_done', 'condtional_logic', 'conditional_logic' );
+        $this->maybe_migrate_element( 'ccfef_plugin_initialized', 'ccfef_migrate_done', 'country_code', 'country_code' );
+        $this->maybe_migrate_element( 'fme_plugin_initialized', 'fme_migrate_done', 'form_input_mask', 'form_input_mask' );
     }
 
     /**
