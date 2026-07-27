@@ -3,15 +3,15 @@
  * Plugin Name: Conditional Fields for Elementor Form
  * Plugin URI:https://coolplugins.net/
  * Description: The Conditional Fields for Elementor plugin add-on used to show and hide form fields based on conditional input values.
- * Version: 1.7.4
+ * Version: 1.7.5
  * Author:  Cool Plugins
  * Author URI: https://coolplugins.net/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
  * License:GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:conditional-fields-for-elementor-form
  * Requires Plugins: elementor
- * Elementor tested up to:  4.1.1
- * Elementor Pro tested up to:  4.1.0
+ * Elementor tested up to:  4.2.0
+ * Elementor Pro tested up to:  4.2.0
  *
  * @package cfef
  */
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 if ( ! defined( 'CFEF_VERSION' ) ) {
-	define( 'CFEF_VERSION', '1.7.4' );
+	define( 'CFEF_VERSION', '1.7.5' );
 }
 /*** Defined constent for later use */
 define( 'CFEF_FILE', __FILE__ );
@@ -78,6 +78,8 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 			add_action( 'elementor_pro/forms/actions/register', array($this,'cfef_register_new_form_actions') );
 			add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
 			add_action('wp_head', array( $this, 'stop_format_detection_in_safari' ));
+			add_filter( 'elementor-pro/editor/v2/packages', array( $this, 'filter_elementor_pro_editor_packages' ) );
+			add_action( 'elementor/editor/v2/scripts/enqueue', array( $this, 'enqueue_editor_templates_extended_stub' ), 20 );
 			$this->includes();
 		}
 
@@ -402,6 +404,35 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 
 			return $plugin_meta;
 
+		}
+
+		/**
+		 * Skip Elementor Pro's editor-templates-extended package (crashes editor with nested form controls).
+		 *
+		 * @param array $packages Editor v2 packages.
+		 * @return array
+		 */
+		public function filter_elementor_pro_editor_packages( $packages ) {
+			if ( ! is_array( $packages ) ) {
+				return $packages;
+			}
+
+			return array_values( array_diff( $packages, array( 'editor-templates-extended' ) ) );
+		}
+
+		/**
+		 * Stub the removed package handle for other Pro packages that depend on it.
+		 */
+		public function enqueue_editor_templates_extended_stub() {
+			wp_register_script(
+				'elementor-v2-editor-templates-extended',
+				CFEF_PLUGIN_URL . 'assets/js/cfef-editor-templates-extended-stub.js',
+				array(),
+				CFEF_VERSION,
+				true
+			);
+
+			wp_enqueue_script( 'elementor-v2-editor-templates-extended' );
 		}
 
 
