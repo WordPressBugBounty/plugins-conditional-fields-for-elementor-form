@@ -43,7 +43,6 @@ class Create_Conditional_Fields {
 		add_action( 'elementor/element/form/section_form_fields/before_section_end', array( $this, 'append_conditional_fields_controler' ), 10, 2 );
 		add_action( 'elementor/element/ehp-form/section_form_fields/before_section_end', array( $this, 'append_conditional_fields_controler' ), 10, 2 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_assets_files' ) );
-		add_action( 'elementor/controls/register', array( $this, 'register_fields_repeater_controler' ) );
 		add_action( 'elementor_pro/forms/validation', array( $this, 'check_validation' ), 9, 3 );
 		add_action( 'hello_plus/forms/validation', array( $this, 'check_validation' ), 9, 3 );
 		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'add_editor_js' ) );
@@ -110,7 +109,7 @@ class Create_Conditional_Fields {
 	 * Js and css files loaded for elementor editor mode for add dynamic tags
 	 */
 	public function add_editor_js() {
-		wp_register_script( 'cfef_logic_editor', CFEF_PLUGIN_URL . 'assets/js/cfef_editor.min.js', array( 'jquery' ), CFEF_VERSION, true );
+		wp_register_script( 'cfef_logic_editor', CFEF_PLUGIN_URL . 'assets/js/cfef_editor.min.js', array( 'jquery', 'elementor-editor' ), CFEF_VERSION, true );
 		wp_enqueue_style( 'cfef_logic_editor', CFEF_PLUGIN_URL . 'assets/css/cfef_editor.min.css', null, CFEF_VERSION );
 		wp_enqueue_script( 'cfef_logic_editor' );
 		if ( is_plugin_active( 'hello-plus/hello-plus.php' ) ) {
@@ -193,10 +192,17 @@ class Create_Conditional_Fields {
 				'cfef_repeater_data'         => array(
 					'name'           => 'cfef_repeater_data',
 					'label'          => esc_html__( 'Show / Hide Fields If','conditional-fields-for-elementor-form' ),
-					'type'           => 'field_condition_repeater',
+					'type'           => Controls_Manager::REPEATER,
 					'tab'            => 'content',
 					'inner_tab'      => 'form_fields_conditions_tab',
 					'tabs_wrapper'   => 'form_fields_tabs',
+					'item_actions'   => array(
+						'add'         => true,
+						'duplicate'   => true,
+						'remove'      => true,
+						'sort'        => true,
+						'drag_n_drop' => true,
+					),
 					'fields'         => array(
 						array(
 							'name'        => 'cfef_logic_field_id',
@@ -296,15 +302,6 @@ class Create_Conditional_Fields {
 
 			$control_data['fields'] = \array_merge( $control_data['fields'], $field_controls );
 			$widget->update_control( 'form_fields', $control_data );
-	}
-	/**
-	 * Function for call repeater call to add field repeater functionality
-	 *
-	 * @param object $controls_manager use for register repeater.
-	 */
-	public function register_fields_repeater_controler( $controls_manager ) {
-		include CFEF_PLUGIN_DIR . 'includes/class-control-repeater-field.php';
-		$controls_manager->register( new \Control_Repeater_Field() );
 	}
 	/**
 	 * Function for check all the values added in conditional  fields

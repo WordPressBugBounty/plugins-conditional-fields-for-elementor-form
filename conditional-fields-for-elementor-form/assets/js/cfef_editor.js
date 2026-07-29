@@ -1,10 +1,61 @@
+"use strict";
+
+var formRepeaterFields = [];
+var getTagStatus = false;
+
+function registerCfefRepeaterControlView() {
+    var elementorInstance = window.elementor;
+    var originalRepeater = elementorInstance && elementorInstance.modules && elementorInstance.modules.controls && elementorInstance.modules.controls.Repeater;
+
+    if (!originalRepeater || elementorInstance.modules.controls.cfefRepeaterPatched) {
+        return;
+    }
+
+    var RepeaterControlItemView = originalRepeater.extend({
+        onBeforeRender: function () {
+            if (this.$el.hasClass('elementor-control-cfef_repeater_data')) {
+                this.$el[0].addEventListener('click', function (event) {
+                    event.stopPropagation();
+                });
+            }
+        },
+        onDestroy: function () {
+            if (this.$el.closest('.elementor-control-type-form-fields-repeater')) {
+                var elements = this.$el.closest('.elementor-repeater-fields-wrapper').find('.elementor-form-field-shortcode');
+                setTimeout(function () {
+                    if (!getTagStatus) {
+                        formRepeaterFields = [];
+                        getTagStatus = true;
+                        elements.each(function (indx, ele) {
+                            formRepeaterFields.push(ele);
+                        });
+                    }
+                });
+                setTimeout(function () {
+                    if (getTagStatus) {
+                        getTagStatus = false;
+                    }
+                }, 300);
+            }
+        }
+    });
+
+    elementorInstance.addControlView('repeater', RepeaterControlItemView);
+    elementorInstance.modules.controls.cfefRepeaterPatched = true;
+}
+
+window.addEventListener('elementor/init', registerCfefRepeaterControlView);
+
+if (window.jQuery) {
+    jQuery(window).on('elementor:init', registerCfefRepeaterControlView);
+}
+
 (function($) {
     "use strict";
 
     // function for all dynamic tag to show the Id's of all elements
-    $( document ).ready( function () { 
+    $( document ).ready( function () {
 
-        
         jQuery(document).on('click','.elementor-control-form_fields_conditions_tab',(event)=>{
             const mainWrp=jQuery(event.currentTarget).closest('.elementor-repeater-row-controls.editable');
             const addBtn=mainWrp.find('.elementor-control-cfef_repeater_data .elementor-repeater-add');
@@ -20,15 +71,12 @@
                         } else {
                             showHideFieldLableText[0].textContent = 'Show fields if';
                         }
-                        break; // Exit the loop once a checked radio button is found
+                        break;
                     }
                 }
             }
 
-            // Update label on initial page load
             updateLabel();
-
-            // Event listener to update label when radio button selection changes
             logicMode.on('change', updateLabel);
             if (!logicMeet.innerHTML.includes('(PRO)')) {
                 logicMeet.innerHTML += ' (PRO)';
@@ -57,9 +105,8 @@
               $(this).after('<div class="elementor-control-dynamic-switcher elementor-control-unit-1 cfef-add-tag" data-tooltip="add Tags" original-title=""><i class="eicon-database" aria-hidden="true"></i><span class="elementor-screen-only">Dynamic Tags</span></div>');
               $(this).data("isChecked","ok");
             }
-        }) 
+        })
 
-        // create list of id's of form fields for dynamic tags
         $("body").on("click",".cfef-add-tag",function(event){
            var idList ='<ul class="cfef-dynamic-tag">';
            var formWrapper = $(this).closest(".elementor-repeater-fields-wrapper").parents(".elementor-repeater-fields-wrapper");
@@ -82,21 +129,20 @@
           idList +='</ul>';
           $(this).closest(".elementor-control-input-wrapper").append(idList);
         })
-        
-        $(document).mouseup(function(event) 
+
+        $(document).mouseup(function(event)
         {
             var container = $(".cfef-dynamic-tag");
-        
-            if (!container.is(event.target) && container.has(event.target).length === 0) 
+
+            if (!container.is(event.target) && container.has(event.target).length === 0)
             {
                 container.hide();
             }
         });
 
-            // function to copy the id of the selected option from dynamic tag
             $("body").on("click", ".cfef-dynamic-tag li", function (event) {
                 var selectedValue = $(this).data("field-id");
-                $(this).parent().siblings().val(selectedValue);                
+                $(this).parent().siblings().val(selectedValue);
                 $(this).parent().siblings().trigger('input');
                 if($('#elementor-panel-saver-button-publish')[0].classList.contains('elementor-disabled')){
                     $('#elementor-panel-saver-button-publish')[0].classList.remove('elementor-disabled');
@@ -106,7 +152,6 @@
                 }, 500);
         });
 
-        // Elementor Review Notice Start
         jQuery(document).on('click','#cfef_elementor_review_dismiss',(event)=>{
             jQuery(".cfef_elementor_review_notice").hide();
             const btn=jQuery(event.target);
@@ -115,8 +160,7 @@
 
             jQuery.ajax({
                 type: 'POST',
-                // eslint-disable-next-line no-undef
-                url: url, // Set this using wp_localize_script
+                url: url,
                 data: {
                     action: 'cfef_elementor_review_notice',
                     cfef_notice_dismiss: true,
@@ -127,6 +171,5 @@
                 }
             });
         });
-        // Elementor Review Notice End
     })
 })(jQuery);
