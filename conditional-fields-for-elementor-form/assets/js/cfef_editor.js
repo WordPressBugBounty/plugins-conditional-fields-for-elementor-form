@@ -3,6 +3,53 @@
 var formRepeaterFields = [];
 var getTagStatus = false;
 
+/**
+ * Keep the raw document config free of Backbone objects for nested repeaters.
+ *
+ * Elementor's BaseSettings::handleRepeaterData() writes a Backbone.Collection back
+ * into the attributes object it receives. For a repeater nested inside a repeater
+ * row (cfef_repeater_data inside form_fields) that object is the raw row from
+ * elementor.documents.getCurrent().config.elements, so the config ends up with a
+ * circular Collection. Elementor Pro's editor-templates-extended package walks that
+ * config recursively and crashes with "Maximum call stack size exceeded".
+ * Passing shallow row copies keeps the raw config untouched.
+ * The shared `cfefNestedRepeaterPatched` flag prevents double patching when
+ * Cool FormKit is active as well. Wrapped in an IIFE so the helper name does not
+ * clash with Cool FormKit's global editor script.
+ */
+(function () {
+    const cfefPatchNestedRepeaterSettings = () => {
+        const models = window.elementorModules && elementorModules.editor && elementorModules.editor.elements && elementorModules.editor.elements.models;
+        const proto = models && models.BaseSettings && models.BaseSettings.prototype;
+
+        if (!proto || typeof proto.convertRepeaterValueToCollection !== 'function' || proto.cfefNestedRepeaterPatched) {
+            return;
+        }
+
+        const originalConvert = proto.convertRepeaterValueToCollection;
+        const hasNestedRepeater = (control) => Object.values(control.fields || {}).some(
+            (field) => field && ('repeater' === field.type || field.is_repeater)
+        );
+
+        proto.convertRepeaterValueToCollection = function (attrs, repeaterControl) {
+            const rows = attrs ? attrs[repeaterControl.name] : null;
+
+            if (Array.isArray(rows) && hasNestedRepeater(repeaterControl)) {
+                const clonedRows = rows.map((row) => (
+                    row && 'object' === typeof row && !(row instanceof Backbone.Model) ? Object.assign({}, row) : row
+                ));
+                attrs = Object.assign({}, attrs, { [repeaterControl.name]: clonedRows });
+            }
+
+            return originalConvert.call(this, attrs, repeaterControl);
+        };
+        proto.cfefNestedRepeaterPatched = true;
+    };
+
+    cfefPatchNestedRepeaterSettings();
+    window.addEventListener('elementor/init', cfefPatchNestedRepeaterSettings);
+})();
+
 function registerCfefRepeaterControlView() {
     var elementorInstance = window.elementor;
     var originalRepeater = elementorInstance && elementorInstance.modules && elementorInstance.modules.controls && elementorInstance.modules.controls.Repeater;
