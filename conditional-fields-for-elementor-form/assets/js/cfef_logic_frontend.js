@@ -667,10 +667,14 @@
                     .trim();
 
               
-            // If the message hasn't been added yet, insert it and replace "Next" with the actual button text
+            // If the message hasn't been added yet, insert it safely as text
             if (container.prev(".cfef-step-field-text").length === 0) {
                     var message = my_script_vars_elementor.no_input_step.replace('%s', nextButtonText);
-                    container.before('<p class="cfef-step-field-text">' + message + '</p>');
+                    var hintParagraph = $('<p>', {
+                        'class': 'cfef-step-field-text',
+                        'text': message
+                    });
+                    container.before(hintParagraph);
             }
                 
 

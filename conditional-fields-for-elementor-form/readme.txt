@@ -5,7 +5,7 @@ Tags: conditional logic, conditional fields, elementor form, elementor, elemento
 Requires at least: 5.0
 Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.7.7
+Stable tag: 1.7.8
 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -233,6 +233,9 @@ Save or update the page and preview the form to see the conditions in action.
 ---
 
 == Changelog ==
+
+= 1.7.8 | Nov 16, 2026 =
+* Fixed: Step field conditional logic info text.
 
 = 1.7.7 | Nov 10, 2026 =
 * Fixed: Unstyled Theme Builder Header/Footer in the Elementor editor.
