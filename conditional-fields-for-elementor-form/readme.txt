@@ -5,7 +5,7 @@ Tags: conditional logic, conditional fields, elementor form, elementor, elemento
 Requires at least: 5.0
 Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 1.7.8
+Stable tag: 1.7.9
 
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -233,6 +233,11 @@ Save or update the page and preview the form to see the conditions in action.
 ---
 
 == Changelog ==
+
+= 1.7.9 | Nov 25, 2026 =
+* Fixed: Issue with Hello Plus step field notice rendering and Radio/Checkbox conditional field handling for Hello Plus and Elementor Pro forms.
+* Improved: Enqueued the Hello Plus conditional logic script only when an ehp-form widget renders on the page.
+* Improved: Added compatibility improvements and field handling checks for Elementor conditional logic.
 
 = 1.7.8 | Nov 16, 2026 =
 * Fixed: Step field conditional logic info text.

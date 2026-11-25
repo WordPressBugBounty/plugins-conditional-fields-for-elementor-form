@@ -50,6 +50,35 @@ class Create_Conditional_Fields {
 	}
 
 	/**
+	 * Register the Hello Plus conditional logic frontend script without enqueuing globally.
+	 *
+	 * @return void
+	 */
+	private function register_hello_logic_script() {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		if ( ! is_plugin_active( 'hello-plus/hello-plus.php' ) ) {
+			return;
+		}
+
+		if ( ! wp_script_is( 'cfef_logic_hello', 'registered' ) ) {
+			wp_register_script( 'cfef_logic_hello', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend_hello.min.js', array( 'jquery' ), CFEF_VERSION, true );
+			wp_localize_script(
+				'cfef_logic_hello',
+				'my_script_vars',
+				array(
+					'no_input_required'   => __( 'No input is required on this step. Just click "', 'conditional-fields-for-elementor-form' ),
+					'to_proceed'          => __( '" to proceed.', 'conditional-fields-for-elementor-form' ),
+					'next_button_default' => __( 'Next', 'conditional-fields-for-elementor-form' ),
+					'pluginConstant'      => CFEF_PLUGIN_DIR,
+				)
+			);
+		}
+	}
+
+	/**
 	 * Js and css files loaded for frontend form validation check
 	 */
 	public function add_assets_files() {
@@ -78,20 +107,8 @@ class Create_Conditional_Fields {
 	
 	
 		
-		if (is_plugin_active('hello-plus/hello-plus.php')) {
-			wp_register_script( 'cfef_logic_hello', CFEF_PLUGIN_URL . 'assets/js/cfef_logic_frontend_hello.min.js', array( 'jquery' ), CFEF_VERSION, true );
-			wp_localize_script(
-				'cfef_logic_hello',
-				'my_script_vars',
-				array(
-					'no_input_required'    => __('No input is required on this step. Just click "','conditional-fields-for-elementor-form'),
-					'to_proceed'           => __('" to proceed.','conditional-fields-for-elementor-form'),
-					'next_button_default'  => __('Next','conditional-fields-for-elementor-form'), 
-					'pluginConstant' => CFEF_PLUGIN_DIR,
-				)
-			);
-			wp_enqueue_script( 'cfef_logic_hello' );
-		}
+		// Register Hello Plus logic script only; enqueue occurs in all_field_conditions_hello() when an ehp-form widget renders.
+		$this->register_hello_logic_script();
 
 		// Add hidden class CSS
 		wp_register_style( 'hide_field_class_style', false, array(), CFEF_VERSION);
@@ -406,19 +423,30 @@ class Create_Conditional_Fields {
 
 		
 		if ( ! empty( $condition ) ) {
+			$form_id = '';
 			if ( is_object( $widget ) && method_exists( $widget, 'get_id' ) ) {
 				$form_id = $widget->get_id();
 			}
-			$template_id = 'cfef_logic_data_' . $form_id;			
-			
-			echo '<template id="' . esc_attr( $template_id ) . '" class="cfef_logic_data_js" data-form-id="' . esc_attr( $form_id ) . '">' .  esc_html($condition) . '</template>';
+			if ( is_object( $widget ) && method_exists( $widget, 'add_render_attribute' ) ) {
+				$widget->add_render_attribute( 'form', 'data-cfef-server', '1' );
+			}
+			$template_id = 'cfef_logic_data_' . $form_id;
+
+			echo '<template id="' . esc_attr( $template_id ) . '" class="cfef_logic_data_js" data-form-id="' . esc_attr( $form_id ) . '" data-cfef-rendered="server">' . esc_html( $condition ) . '</template>';
 		}
 
 	}
 
 	public function all_field_conditions_hello($widget){
-		if(method_exists($widget, 'get_name') && $widget->get_name() == 'ehp-form'){
-			$settings = $widget->get_settings_for_display();
+		if ( is_object( $widget ) && method_exists( $widget, 'get_name' ) && 'ehp-form' === $widget->get_name() ) {
+			$this->register_hello_logic_script();
+			if ( wp_script_is( 'cfef_logic_hello', 'registered' ) ) {
+				wp_enqueue_script( 'cfef_logic_hello' );
+			}
+			if ( method_exists( $widget, 'add_render_attribute' ) ) {
+				$widget->add_render_attribute( '_wrapper', 'data-cfef-server', '1' );
+			}
+			$settings = method_exists( $widget, 'get_settings_for_display' ) ? $widget->get_settings_for_display() : array();
 			$instance = $widget;
 			$this->all_field_conditions($settings, $instance);
 		}

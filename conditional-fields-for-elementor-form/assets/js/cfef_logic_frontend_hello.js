@@ -40,14 +40,29 @@ $(document).ready(function() {
         return textArea.value;
     }
 
+    function getServerLogicData(form, formId) {
+        if (!form || form.length === 0 || !isValidFieldKey(formId)) {
+            return null;
+        }
+        if (form.closest(".elementor-element[data-cfef-server='1']").length === 0) {
+            return null;
+        }
+        var templateEl = $('#cfef_logic_data_' + formId + '[data-cfef-rendered="server"]');
+        var raw = templateEl.length > 0 ? templateEl.html() : null;
+        return (raw && raw !== "undefined") ? raw : null;
+    }
+
     // function to add hidden class when form load
     function addHiddenClass(form, formId) {
-        var logicData =$('#cfef_logic_data_'+formId).html();
+        var logicData = getServerLogicData(form, formId);
      
-        if (logicData && logicData !== "undefined") {
+        if (logicData) {
             try {
                 logicData = jQuery.parseJSON(logicData);
                 $.each(logicData, function(logic_key, logic_value) {
+                    if (!isValidFieldKey(logic_key)) {
+                        return;
+                    }
                     var field;
                     if ($(form).find(".is-field-group-" + logic_key).length) {
                         field = $(form).find(".is-field-group-" + logic_key).closest(".ehp-form__field-group");
@@ -92,11 +107,14 @@ $(document).ready(function() {
     
     // function to check all the conditions valid or not . and based on that condition shosw and hide the fields 
     function logicLoad(form, formId) {
-        var logicData =$('#cfef_logic_data_'+formId).html();
-        if (logicData && logicData !== "undefined") {
+        var logicData = getServerLogicData(form, formId);
+        if (logicData) {
           try {
             logicData = jQuery.parseJSON(logicData);
             $.each(logicData, function (logic_key, logic_value) {
+              if (!isValidFieldKey(logic_key)) {
+                return;
+              }
               if (
                 $(form).find(".is-field-group-" + logic_key).hasClass(
                   "is-field-type-html"
@@ -152,6 +170,9 @@ $(document).ready(function() {
         var conditionPassFail = [];
 
         $.each(logic_value.logic_data, function(conditional_logic_key, conditional_logic_values) {
+            if (!isValidFieldKey(conditional_logic_values.cfef_logic_field_id)) {
+                return;
+            }
             var dependent_fi = $(".is-field-group-" + conditional_logic_values.cfef_logic_field_id, form);
             if(dependent_fi.hasClass('is-field-type-ehp-acceptance') || dependent_fi.hasClass('is-field-type-ehp-acceptance')){
                     dependent_fi.find('.elementor-field-subgroup .elementor-field-option input').click(()=>{
@@ -198,13 +219,19 @@ $(document).ready(function() {
                       .text()
                       .trim();
                 
-                    // If the message hasn't been added yet, insert it and replace "Next" with the actual button text
+                    // If the message hasn't been added yet, insert it safely as text
                     if (container.prev(".cfef-step-field-text").length === 0) {
-                      container.before(
-                        '<p class="cfef-step-field-text">No input is required on this step. Just click "' +
-                          nextButtonText +
-                          '" to proceed.</p>'
-                      );
+                      var stepPrefix = (typeof my_script_vars !== "undefined" && my_script_vars.no_input_required)
+                        ? my_script_vars.no_input_required
+                        : 'No input is required on this step. Just click "';
+                      var stepSuffix = (typeof my_script_vars !== "undefined" && my_script_vars.to_proceed)
+                        ? my_script_vars.to_proceed
+                        : '" to proceed.';
+                      var hintParagraph = $('<p>', {
+                        'class': 'cfef-step-field-text',
+                        'text': stepPrefix + nextButtonText + stepSuffix
+                      });
+                      container.before(hintParagraph);
                     }
                   } else {
                     // Check if field exists before adding the class
@@ -296,39 +323,49 @@ $(document).ready(function() {
         }
     }
     
+    function isValidFieldKey(fieldKey) {
+        return typeof fieldKey === "string" && /^[A-Za-z0-9_-]+$/.test(fieldKey);
+    }
+
+    function appendPlaceholderOption(formField, fieldKey, inputAttrs) {
+        if (!formField || formField.length === 0 || !isValidFieldKey(fieldKey)) {
+            return;
+        }
+        var targetContainer = formField.find(".elementor-field-subgroup");
+        if (targetContainer.length === 0) {
+            return;
+        }
+        if (targetContainer.find("input").filter(function() { return this.value === inputAttrs.value; }).length !== 0) {
+            return;
+        }
+        var inputEl = $("<input>", inputAttrs).prop("checked", true).attr("checked", "checked");
+        var optionWrapper = $("<span>", { "class": "elementor-field-option" }).append(inputEl);
+        targetContainer.append(optionWrapper);
+    }
+
     // Add the default value when form Field is hidden
     function logicFixedRequiredHidden(formField, fieldKey, file_types) {
         if (formField.hasClass("is-field-type-radio")) {
-            var groupclass = '.is-field-group-' + fieldKey;
-            const field2 = $(groupclass);
-
-            if (field2.length > 0) {
-                if (field2.find('input[value="^newOptionTest"]').length === 0) {
-                    const newOption = $(`
-                        <span class="elementor-field-option">
-                            <input type="radio" value="^newOptionTest" id="form-field-newOption" name="form_fields[${fieldKey}]" required="required" aria-required="true" checked="checked">
-                        </span>
-                    `);
-                    field2.find('.elementor-field-subgroup').append(newOption);
-                }
-            }
+            appendPlaceholderOption(formField, fieldKey, {
+                type: "radio",
+                value: "^newOptionTest",
+                id: "form-field-newOption",
+                name: "form_fields[" + fieldKey + "]",
+                required: "required",
+                "aria-required": "true"
+            });
         } else if (formField.hasClass("is-field-type-ehp-acceptance")) {
             const acceptanceInput = formField.find('.elementor-field-subgroup .elementor-field-option input')[0]
             if (acceptanceInput) {
                 acceptanceInput.checked = true;
             }
         } else if (formField.hasClass("is-field-type-checkbox")) {
-            var groupclass = '.is-field-group-' + fieldKey;
-            const field2 = $(groupclass);
-
-            if (field2.length > 0) {
-                if (field2.find('input[value="newchkTest"]').length === 0) {
-                    const newOption = $(`
-                        <span class="elementor-field-option"><input type="checkbox" value="newchkTest" id="form-field-newchkTest" name="form_fields[${fieldKey}][]" checked="checked"> </span>
-                    `);
-                    field2.find('.elementor-field-subgroup').append(newOption);
-                }
-            }
+            appendPlaceholderOption(formField, fieldKey, {
+                type: "checkbox",
+                value: "newchkTest",
+                id: "form-field-newchkTest",
+                name: "form_fields[" + fieldKey + "][]"
+            });
         } 
         else if (formField.hasClass("is-field-type-date")) {
             let value = formField.find("input").val()
@@ -423,6 +460,9 @@ $(document).ready(function() {
 
     // Function to get the value of the conditional field 
     function getFieldEnteredValue(id = "", form = "body") {
+        if (!isValidFieldKey(id)) {
+          return "";
+        }
         var inputValue = "";
         var fieldGroup = $(".is-field-group-" + id, form);
       
@@ -449,7 +489,7 @@ $(document).ready(function() {
               
     // function to get the id of the conditional field 
     function getFieldMainDivById(id = "", form = null) {
-        if (form) {
+        if (form && isValidFieldKey(id)) {
           if ($("#form-field-" + id, form).length > 0) {
             return $("#form-field-" + id, form).closest(".ehp-form__field-group");
           } else {
@@ -459,49 +499,54 @@ $(document).ready(function() {
         return null;
     }
 
-    //add conditional fields on popup form when page load
-    $(document).on('elementor/popup/show', function() {
-        $(".ehp-form").each(function() {
-            var form = $(this).closest(".elementor-widget-ehp-form");
-            var formId = form.closest(".elementor-element").attr("data-id");
-            addHiddenClass(form, formId);
-            logicLoad(form, formId);
-        });
-    });
+    function getHelloFormContext(el) {
+        var form = $(el).closest(".elementor-widget-ehp-form");
+        var wrapper = form.closest(".elementor-element[data-cfef-server='1']");
+        if (form.length === 0 || wrapper.length === 0) {
+            return null;
+        }
+        var formId = wrapper.attr("data-id");
+        if (!isValidFieldKey(formId)) {
+            return null;
+        }
+        return { form: form, formId: formId };
+    }
 
-    $(document).ready(function(){
+    function initHelloConditionalForms() {
         $(".ehp-form").each(function() {
-            var form = $(this).closest(".elementor-widget-ehp-form");
-            var formId = form.closest(".elementor-element").attr("data-id");
-            addHiddenClass(form, formId);
-            logicLoad(form, formId);
+            var ctx = getHelloFormContext(this);
+            if (!ctx) {
+                return;
+            }
+            addHiddenClass(ctx.form, ctx.formId);
+            logicLoad(ctx.form, ctx.formId);
         });
-    });
+    }
+
+    //add conditional fields on popup form when page load
+    $(document).on('elementor/popup/show', initHelloConditionalForms);
+
+    $(document).ready(initHelloConditionalForms);
 
     //add conditional fields on form when page load
-    window.addEventListener('elementor/frontend/init', function() {
-        $(".ehp-form").each(function() {
-            var form = $(this).closest(".elementor-widget-ehp-form");
-            var formId = form.closest(".elementor-element").attr("data-id")
-            addHiddenClass(form, formId);
-            logicLoad(form, formId);
-        });
-    });
+    window.addEventListener('elementor/frontend/init', initHelloConditionalForms);
 
     // Update form filed hidden status after form submit
     jQuery(document).on('submit_success', function(e, data) {
         setTimeout(()=>{
-            var form = jQuery(e.target).closest(".elementor-widget-ehp-form");
-            var formId = form.closest(".elementor-element").attr("data-id");
-            logicLoad(form, formId);
+            var ctx = getHelloFormContext(e.target);
+            if (ctx) {
+                logicLoad(ctx.form, ctx.formId);
+            }
         },200)
     });
 
     // validate condtions when any changes apply to any form fields
     $("body").on("input change", ".elementor-widget-ehp-form input, .elementor-widget-ehp-form select, .elementor-widget-ehp-form textarea", function(e) {
-        var form = $(this).closest(".elementor-widget-ehp-form");
-        var formId = form.closest(".elementor-element").attr("data-id");
-        logicLoad(form, formId);
+        var ctx = getHelloFormContext(this);
+        if (ctx) {
+            logicLoad(ctx.form, ctx.formId);
+        }
     });
 
 });

@@ -40,13 +40,48 @@
             return textArea.value;
         }
 
+        function isValidFieldKey(fieldKey) {
+            return typeof fieldKey === "string" && /^[A-Za-z0-9_-]+$/.test(fieldKey);
+        }
+
+        function appendPlaceholderOption(formField, fieldKey, inputAttrs) {
+            if (!formField || formField.length === 0 || !isValidFieldKey(fieldKey)) {
+                return;
+            }
+            var targetContainer = formField.find(".elementor-field-subgroup");
+            if (targetContainer.length === 0) {
+                return;
+            }
+            if (targetContainer.find("input").filter(function() { return this.value === inputAttrs.value; }).length !== 0) {
+                return;
+            }
+            var inputEl = $("<input>", inputAttrs).prop("checked", true).attr("checked", "checked");
+            var optionWrapper = $("<span>", { "class": "elementor-field-option" }).append(inputEl);
+            targetContainer.append(optionWrapper);
+        }
+
+        function getServerLogicData(form, formId) {
+            if (!form || form.length === 0 || !isValidFieldKey(formId)) {
+                return null;
+            }
+            if (form.find("form.elementor-form[data-cfef-server='1']").length === 0) {
+                return null;
+            }
+            var templateEl = form.find("#cfef_logic_data_" + formId + "[data-cfef-rendered='server']");
+            var raw = templateEl.length > 0 ? templateEl.html() : null;
+            return (raw && raw !== "undefined") ? raw : null;
+        }
+
         // function to add hidden class when form load
         function addHiddenClass(form, formId) {
-           var logicData = $('#cfef_logic_data_'+formId).html();
-            if (logicData && logicData !== "undefined") {
+           var logicData = getServerLogicData(form, formId);
+            if (logicData) {
                 try {
                     logicData = jQuery.parseJSON(logicData);
                     $.each(logicData, function(logic_key, logic_value) {
+                        if (!isValidFieldKey(logic_key)) {
+                            return;
+                        }
                         var field;
                         if ($(".elementor-field-group-" + logic_key, form).hasClass("elementor-field-type-html")) {
                             field = $(".elementor-field-group-" + logic_key, form).closest(".elementor-field-group");
@@ -93,11 +128,14 @@
         
         // function to check all the conditions valid or not . and based on that condition shosw and hide the fields 
         function logicLoad(form, formId) {
-            var logicData =$('#cfef_logic_data_'+formId).html();
-            if (logicData && logicData !== "undefined") {
+            var logicData = getServerLogicData(form, formId);
+            if (logicData) {
               try {
                 logicData = jQuery.parseJSON(logicData);
                 $.each(logicData, function (logic_key, logic_value) {
+                  if (!isValidFieldKey(logic_key)) {
+                    return;
+                  }
                   if (
                     $(".elementor-field-group-" + logic_key, form).hasClass(
                       "elementor-field-type-html"
@@ -154,6 +192,9 @@
             var conditionPassFail = [];
 
             $.each(logic_value.logic_data, function(conditional_logic_key, conditional_logic_values) {
+                if (!isValidFieldKey(conditional_logic_values.cfef_logic_field_id)) {
+                    return;
+                }
                 var dependent_fi = $(".elementor-field-group-" + conditional_logic_values.cfef_logic_field_id, form);
                 if(dependent_fi.hasClass('elementor-field-group-acceptance') || dependent_fi.hasClass('elementor-field-type-acceptance')){
                         dependent_fi.find('.elementor-field-subgroup .elementor-field-option input').click(()=>{
@@ -308,18 +349,14 @@
             // Add the default value when form Field is hidden
         function logicFixedRequiredHidden(formField, fieldKey, file_types, formId) {
             if (formField.hasClass("elementor-field-type-radio")) {
-                var groupclass = ".elementor-field-group-" + fieldKey;
-          const field2 = $(groupclass, $(`[data-form-id="form-${formId}"]`));
-                if (field2.length > 0) {
-                    if (field2.find('input[value="^newOptionTest"]').length === 0) {
-                        const newOption = $(`
-                            <span class="elementor-field-option">
-                                <input type="radio" value="^newOptionTest" id="form-field-newOption" name="form_fields[${fieldKey}]" required="required" aria-required="true" checked="checked">
-                            </span>
-                        `);
-                        field2.find('.elementor-field-subgroup').append(newOption);
-                    }
-                }
+                appendPlaceholderOption(formField, fieldKey, {
+                    type: "radio",
+                    value: "^newOptionTest",
+                    id: "form-field-newOption",
+                    name: "form_fields[" + fieldKey + "]",
+                    required: "required",
+                    "aria-required": "true"
+                });
             } else if (formField.hasClass("elementor-field-type-acceptance")) {
                 const acceptanceInput = formField.find('.elementor-field-subgroup .elementor-field-option input')[0]
                 jQuery(acceptanceInput).addClass("acceptance_check_toggle");
@@ -327,17 +364,12 @@
                     acceptanceInput.checked = true;
                 }
             } else if (formField.hasClass("elementor-field-type-checkbox")) {
-                var groupclass = '.elementor-field-group-' + fieldKey;
-                const field2 = $(groupclass, $(`[data-form-id="form-${formId}"]`));
-
-                if (field2.length > 0) {
-                    if (field2.find('input[value="newchkTest"]').length === 0) {
-                        const newOption = $(`
-                            <span class="elementor-field-option"><input type="checkbox" value="newchkTest" id="form-field-newchkTest" name="form_fields[${fieldKey}][]" checked="checked"> </span>
-                        `);
-                        field2.find('.elementor-field-subgroup').append(newOption);
-                    }
-                }
+                appendPlaceholderOption(formField, fieldKey, {
+                    type: "checkbox",
+                    value: "newchkTest",
+                    id: "form-field-newchkTest",
+                    name: "form_fields[" + fieldKey + "][]"
+                });
             } else if (formField.hasClass("elementor-field-type-date")) {
                 let value = formField.find("input").val()
                 if(value === ""){
@@ -438,6 +470,9 @@
 
                 // Function to get the value of the conditional field 
                 function getFieldEnteredValue(id = "", form = "body") {
+                    if (!isValidFieldKey(id)) {
+                      return "";
+                    }
                     var inputValue = "";
                     var fieldGroup = $(".elementor-field-group-" + id, form);
                   
@@ -473,7 +508,7 @@
         
         // function to get the id of the conditional field 
         function getFieldMainDivById(id = "", form = null) {
-            if (form) {
+            if (form && isValidFieldKey(id)) {
               if ($("#form-field-" + id, form).length > 0) {
                 return $("#form-field-" + id, form).closest(".elementor-field-group");
               } else {
@@ -745,55 +780,56 @@
 
           
 
-        //add conditional fields on popup form when page load
-        $(document).on('elementor/popup/show', function() {
-            $(".elementor-form").each(function() {
-                var form = $(this).closest(".elementor-widget-form");
-                var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
-                form.attr("data-form-id", "form-" + formId);
-                addHiddenClass(form, formId);
-                logicLoad(form, formId);
-            });
-        });
+        function getElementorFormContext(el) {
+            var form = $(el).closest(".elementor-widget-form");
+            if (form.length === 0 || form.find("form.elementor-form[data-cfef-server='1']").length === 0) {
+                return null;
+            }
+            var templateEl = form.find("template.cfef_logic_data_js[data-cfef-rendered='server']").first();
+            var formId = templateEl.attr("data-form-id");
+            if (!isValidFieldKey(formId)) {
+                return null;
+            }
+            form.attr("data-form-id", "form-" + formId);
+            return { form: form, formId: formId };
+        }
 
-        $(document).ready(function(){
+        function initElementorConditionalForms() {
             $(".elementor-form").each(function() {
-                var form = $(this).closest(".elementor-widget-form");
-                var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
-                form.attr("data-form-id", "form-" + formId);
-                addHiddenClass(form, formId);
-                logicLoad(form, formId);
+                var ctx = getElementorFormContext(this);
+                if (!ctx) {
+                    return;
+                }
+                addHiddenClass(ctx.form, ctx.formId);
+                logicLoad(ctx.form, ctx.formId);
             });
-        });
+        }
+
+        //add conditional fields on popup form when page load
+        $(document).on('elementor/popup/show', initElementorConditionalForms);
+
+        $(document).ready(initElementorConditionalForms);
 
      //add conditional fields on form when page load
-        window.addEventListener('elementor/frontend/init', function() {
-            $(".elementor-form").each(function() {
-                var form = $(this).closest(".elementor-widget-form");
-                var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
-                form.attr("data-form-id", "form-" + formId);
-                addHiddenClass(form, formId);
-                logicLoad(form, formId);
-            });
-        });
+        window.addEventListener('elementor/frontend/init', initElementorConditionalForms);
 
         // Update form filed hidden status after form submit
         jQuery(document).on('submit_success', function(e, data) {
             setTimeout(()=>{
-                    var form = jQuery(e.target).closest(".elementor-widget-form");
-                    var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
-                    form.attr("data-form-id", "form-" + formId);
-                    logicLoad(form, formId);
+                    var ctx = getElementorFormContext(e.target);
+                    if (ctx) {
+                        logicLoad(ctx.form, ctx.formId);
+                    }
             },200)
         });
 
 
         // validate condtions when any changes apply to any form fields
         $("body").on("input change", ".elementor-form input, .elementor-form select, .elementor-form textarea", function(e) {
-            var form = $(this).closest(".elementor-widget-form");
-            var formId = form.find(".cfef_logic_data_js").attr("data-form-id");
-            form.attr("data-form-id", "form-" + formId);
-            logicLoad(form, formId);
+            var ctx = getElementorFormContext(this);
+            if (ctx) {
+                logicLoad(ctx.form, ctx.formId);
+            }
         });
 
 

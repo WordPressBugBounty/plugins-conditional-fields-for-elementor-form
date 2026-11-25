@@ -3,7 +3,7 @@
  * Plugin Name: Conditional Fields for Elementor Form
  * Plugin URI:https://coolplugins.net/
  * Description: The Conditional Fields for Elementor plugin add-on used to show and hide form fields based on conditional input values.
- * Version: 1.7.8
+ * Version: 1.7.9
  * Author:  Cool Plugins
  * Author URI: https://coolplugins.net/?utm_source=cfef_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
  * License:GPL v2 or later
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 if ( ! defined( 'CFEF_VERSION' ) ) {
-	define( 'CFEF_VERSION', '1.7.8' );
+	define( 'CFEF_VERSION', '1.7.9' );
 }
 /*** Defined constent for later use */
 define( 'CFEF_FILE', __FILE__ );
@@ -332,16 +332,17 @@ if ( ! class_exists( 'Conditional_Fields_For_Elementor_Form' ) ) {
 		 * Show notice to enable elementor pro
 		 */
 		public function admin_notice_missing_main_plugin() {
-			$message = sprintf(
-				// translators: %1$s replace with Conditional Fields for Elementor Form & %2$s replace with Elementor Pro.
-				esc_html__(
-					'%1$s requires %2$s to be installed and activated.','conditional-fields-for-elementor-form'
-				),
-				esc_html__( 'Conditional Fields for Elementor Form','conditional-fields-for-elementor-form' ),
-				esc_html__( 'Elementor Pro','conditional-fields-for-elementor-form' ),
-			); 
-			printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', esc_html( $message ) );
-			deactivate_plugins( plugin_basename( __FILE__ ) );
+			if ( current_user_can( 'activate_plugins' ) ) {
+				$message = sprintf(
+					// translators: %1$s replace with Conditional Fields for Elementor Form & %2$s replace with Elementor Pro.
+					esc_html__(
+						'%1$s requires %2$s to be installed and activated.','conditional-fields-for-elementor-form'
+					),
+					esc_html__( 'Conditional Fields for Elementor Form','conditional-fields-for-elementor-form' ),
+					esc_html__( 'Elementor Pro','conditional-fields-for-elementor-form' )
+				); 
+				printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', esc_html( $message ) );
+			}
 		}
 		/**
 		 * Add options for plugins detail

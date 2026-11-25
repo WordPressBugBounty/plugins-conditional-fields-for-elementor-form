@@ -186,7 +186,8 @@ function handleTooltipButtonAction(){
 							}
 						});
 					} else {
-						alert('Installation error: ' + res.data?.message);
+						var errorMsg = res.data?.errorMessage || res.data?.message || (typeof res.data === 'string' ? res.data : 'Installation failed.');
+						alert('Installation error: ' + errorMsg);
 						ajaxLoader.hide();
 					}
 				},
